@@ -1,6 +1,7 @@
 from typing import NamedTuple, Optional
 from enum import Enum, IntEnum, auto, Flag
 from BaseClasses import Location, Region
+from .ClientUtils import ITEM_APID_BASE
 
 # from .Randomizer.Dungeons import Dungeon
 
@@ -141,7 +142,7 @@ class TPLocation(Location):
 
     @staticmethod
     def get_apid(code: int) -> int:
-        base_id: int = 2320000
+        base_id: int = ITEM_APID_BASE
         return base_id + code
 
 

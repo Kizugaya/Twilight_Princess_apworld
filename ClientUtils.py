@@ -1,3 +1,5 @@
+ITEM_APID_BASE = 2320000
+
 VERSION = "v0.3.0"
 
 Settings_Format = {

@@ -7,6 +7,7 @@ from worlds.AutoWorld import World
 
 # from .Randomizer.Dungeons import Dungeon
 
+from .ClientUtils import ITEM_APID_BASE
 
 # Events / Items to add
 # DiababaDefeated
@@ -77,7 +78,7 @@ class TPItem(Item):
         :param code: The unique code for the item.
         :return: The computed Archipelago ID.
         """
-        base_id: int = 2320000
+        base_id: int = ITEM_APID_BASE
         return base_id + code
 
 
@@ -237,7 +238,7 @@ ITEM_TABLE: dict[str, TPItemData] = {
     "Progressive Fused Shadow": TPItemData("Item", IC.progression, 121, 3, 0xD8),
     "Progressive Hidden Skill": TPItemData("Item", VERY_USEFUL, 122, 7, 0xE1),
     "Progressive Sky Book": TPItemData(
-        "Item", IC.progression, 123, 7, 0xE9
+        "Book", IC.progression, 123, 7, 0xE9
     ),  # 1 book + 6 characters
     # "Sky Character 1": TPItemData("Item", IC.useful, 132, 1, 0xDB),
     # "Sky Character 2": TPItemData("Item", IC.useful, 133, 1, 0xDC),

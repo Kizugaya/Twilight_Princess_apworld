@@ -9,8 +9,6 @@ from typing import TYPE_CHECKING, Any, Optional
 from MultiServer import mark_raw
 import dolphin_memory_engine
 
-from worlds.twilight_princess_apworld.ClientItemChecker import check_dungeon_item_count, check_item_count  # type: ignore
-
 from .ClientItemChecker import check_dungeon_item_count, check_item_count  # type: ignore
 
 from .ClientUtils import (
@@ -34,6 +32,8 @@ from CommonClient import (
 
 from NetUtils import NetworkItem, ClientStatus
 
+from .ClientUtils import ITEM_APID_BASE
+
 if TYPE_CHECKING:
     import kvui
 
@@ -43,7 +43,7 @@ CONNECTION_LOST_STATUS = "Dolphin connection was lost. Please restart your emula
 CONNECTION_CONNECTED_STATUS = "Dolphin connected successfully."
 CONNECTION_INITIAL_STATUS = "Dolphin connection has not been initiated."
 
-VALIDATION_TIME = 10
+VALIDATION_TIME = 5
 
 # CURR_HEALTH_ADDR = 0x804061C2
 # CURR_NODE_ADDR = 0x80406B38
@@ -174,6 +174,21 @@ class TPCommandProcessor(ClientCommandProcessor):
         write_string(SLOT_NAME_ADDR, padded_name)
         return
 
+    @mark_raw
+    def _cmd_validate(self, item_name: str = "") -> None:
+
+        if self.ctx.dolphin_status != CONNECTION_CONNECTED_STATUS:
+            logger.info("please connect dolphin first")
+            return
+
+        if item_name not in ITEM_TABLE:
+            logger.info("not a valid item")
+            return
+
+        logger.info(
+            f"Link has {_validate_item(item_name, self.ctx, True)} x {item_name}"
+        )
+
 
 class TPContext(CommonContext):
     """
@@ -207,7 +222,7 @@ class TPContext(CommonContext):
         self.server_data = deepcopy(server_data)
         self.server_data_built = False
         self.server_data_sent = False
-        self.validation_timer = time.time()
+        self.validation_time_start = time.time()
         # Event is used for pause as it better represents how I want to think about it
         self.validation_pause = asyncio.Event()
 
@@ -249,7 +264,7 @@ class TPContext(CommonContext):
             self.items_received = []
             self.item_queue = deque()
             self.insurance_queue = deque()
-            self.validation_timer = time.time()
+            self.validation_time_start = time.time()
             self.validation_pause.set()
             if check_ingame(self):
                 self.last_received_index = read_short(EXPECTED_INDEX_ADDR)
@@ -289,8 +304,15 @@ class TPContext(CommonContext):
                         item, NetworkItem
                     ), f"[Twilight Princess Client] Recived an item the is not a Network Item {item=}"
                     self.items_received.append(item)
+                    if DEBUGGING:
+                        logger.info(
+                            f"Debug: Recieved {item=} from server \nAnd item in items_receiveced {item in self.items_received}"
+                        )
+
                     self.last_received_index += 1
                     if item.player != self.slot:  # Don't give own items
+                        if DEBUGGING:
+                            logger.info(f"Debug: Adding into the queue {item=}")
                         self.item_queue.append((item, self.last_received_index))
                     self.validation_pause.set()
 
@@ -470,6 +492,8 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
     if not await check_ingame(ctx):
         return False
     if not _check_status():
+        if DEBUGGING:
+            logger.info("Debug: Tried to give items but failed status check")
         return False
 
     for item_name in items:
@@ -478,13 +502,13 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
             ITEM_TABLE[item_name].item_id, int
         ), f"{item_name=} has no item_id"
 
-    ctx.validation_timer = time.time()
-
     # Only add items to the queue if it is empty
     for i in range(0, 8):
         item_stack_addr = ITEM_WRITE_ADDR + i
         if read_byte(item_stack_addr) != 0x00:
             return False
+
+    ctx.validation_time_start = time.time()
 
     # Now its empty
     # Add items starting at 0x8F0 so that it is given first
@@ -525,12 +549,16 @@ async def give_items(ctx: TPContext) -> None:
         while len(ctx.item_queue) > 0:
 
             item, item_index = ctx.item_queue.pop()
+
             item_name = LOOKUP_ID_TO_NAME[item.item]
             assert (
                 item_name in ITEM_TABLE
             ), f"[Twilight Princess Client] tried to give {item_name=} but it is not in the item table"
 
             item_data = ITEM_TABLE[item_name]
+
+            if DEBUGGING:
+                logger.info(f"Debug: Trying to give {item_name=}")
 
             # Basic items we don't care if are given multiple times
             if item_data.type in [
@@ -627,6 +655,8 @@ async def give_items(ctx: TPContext) -> None:
             if len(item_give_queue) == 8 or (
                 item_index >= ctx.last_received_index - 1 and len(item_give_queue) > 0
             ):
+                if DEBUGGING:
+                    logger.info(f"Debug: Queued Items to give {item_give_queue}")
                 while not await _give_items(ctx, item_give_queue):
                     await asyncio.sleep(0.5)
                 write_short(EXPECTED_INDEX_ADDR, item_index + 1)
@@ -636,7 +666,11 @@ async def give_items(ctx: TPContext) -> None:
         ), f"[Twilight Princess Client] item give queue is not empty at the end {item_give_queue=}\n{item_index=} - {ctx.last_received_index=}"
 
         # Now validation should be good to occur
-        ctx.validation_pause.clear()
+        if ctx.validation_pause.is_set():
+            if DEBUGGING:
+                logger.info("Debug: Clearing validation Paused")
+            ctx.validation_pause.clear()
+
         return
         #
         #
@@ -707,13 +741,110 @@ async def give_items(ctx: TPContext) -> None:
         assert expected_idx - 1 == last_item_index  # Check the last item was given
 
 
-async def validate_item(ctx: TPContext) -> None:
+def _validate_item(
+    item_name: str, ctx: TPContext, descriptive=False
+) -> int | tuple[int, int]:
+    """
+    Returns the difference in item count where Positive amount is a missing amount
+    """
+    item_data = ITEM_TABLE[item_name]
+
+    if item_data.type in [
+        "Rupee",
+        "Ammo",
+        "Trap",
+        "Event",
+        "Small key",  # TODO: Insure Keys
+        "Big Key",
+        "Book",
+    ]:
+        # Skip all non insurable items
+        return -1
+
+    elif item_data.type in [
+        "Item",
+        "Bottle",
+        "Bug",
+        "Poe",
+    ]:
+        if (
+            item_data.type == "Bottle"
+        ):  # Bottle is only non progressive that checks together
+            if item_name != "Empty Bottle (Fishing Hole)":
+                return -1
+
+        actual_item_count = check_item_count(item_name, SAVE_FILE_ADDR)
+
+        expected_item_count = 0
+        for item in ctx.items_received:
+            if item.item == item_data.code + ITEM_APID_BASE:
+                expected_item_count += 1
+
+        expected_item_count = min(expected_item_count, item_data.quantity)
+
+        if descriptive:
+            return expected_item_count, actual_item_count
+        else:
+            return expected_item_count - actual_item_count
+
+    elif item_data.type in [
+        "Compass",
+        "Map",
+    ]:
+        if check_dungeon_item_count(item_name, NODES_START_ADDR, ctx.current_node) == 0:
+            return 1
+        else:
+            return 0
+
+    elif item_data.type in [
+        "Heart",
+    ]:
+        # Only try to give heart pieces and not containers
+        if item_name != "Piece of Heart":
+            return -1
+
+        actual_heart_pieace_count = read_short(SAVE_FILE_ADDR)
+        heart_piece_count = 0
+        heart_container_count = 0
+        for item in ctx.items_received:
+            if item.item == ITEM_TABLE["Piece of Heart"].code + ITEM_APID_BASE:
+                heart_piece_count += 1
+            if item.item == ITEM_TABLE["Heart Container"].code + ITEM_APID_BASE:
+                heart_container_count += 1
+
+        heart_difference = (
+            (heart_container_count * 5) + heart_piece_count + 15
+        ) - actual_heart_pieace_count
+
+        if heart_difference > 0:
+            if descriptive:
+                return (
+                    (heart_container_count * 5) + heart_piece_count + 15
+                ), actual_heart_pieace_count
+            else:
+                return heart_difference
+        else:
+            return 0
+    else:
+        assert (
+            False
+        ), f"[Twilight Princess Client] {item_name=} has an invalid type {item_data.type}"
+
+
+async def validate_items(ctx: TPContext) -> None:
 
     # If paused or the timer has not passed then skip validation
     if (ctx.validation_pause.is_set()) or (
-        ctx.validation_timer < (time.time() + VALIDATION_TIME)
+        ctx.validation_time_start + VALIDATION_TIME > time.time()
     ):
+        # if DEBUGGING:
+        #     logger.info(
+        #         f"Debug: validation not ready {ctx.validation_pause.is_set()=} or {ctx.validation_timer=} < {(time.time() + VALIDATION_TIME)}"
+        #     )
         return
+
+    if DEBUGGING:
+        logger.info("Debug: Validating items")
 
     # First check if item queue is empty as we don't want to double give
     for i in range(0, 8):
@@ -721,84 +852,23 @@ async def validate_item(ctx: TPContext) -> None:
         if read_byte(item_stack_addr) != 0x00:
             return
 
-    for item_name, item_data in ITEM_TABLE.items():
+    for item_name in ITEM_TABLE:
 
-        if item_data.type in [
-            "Rupee",
-            "Ammo",
-            "Trap",
-            "Event",
-            "Small key",  # TODO: Insure Keys
-            "Big Key",
-            "Book",
-        ]:
-            # Skip all non insurable items
+        item_count = _validate_item(item_name, ctx)
+
+        assert isinstance(
+            item_count, int
+        ), f"[Twilight Princess Client] {item_count=}, {item_name=}"
+
+        if item_count <= 0:
             continue
 
-        elif item_data.type in [
-            "Item",
-            "Bottle",
-            "Bug",
-            "Poe",
-        ]:
-            if (
-                item_data.type == "Bottle"
-            ):  # Bottle is only non progressive that checks together
-                if item_name != "Empty Bottle (Fishing Hole)":
-                    continue
+        if DEBUGGING:
+            logger.info(
+                f"Debug: validation found you are missing {item_count} x {item_name}"
+            )
 
-            actual_item_count = check_item_count(item_name, SAVE_FILE_ADDR)
-
-            expected_item_count = 0
-            for item in ctx.items_received:
-                if item.item == item_data.code:
-                    expected_item_count += 1
-
-            difference = expected_item_count - actual_item_count
-            if difference > 0:
-                if DEBUGGING:
-                    logger.info(
-                        f"Debug: Insurance caught that you missed {difference}x{item_name} adding it to the queue"
-                    )
-                    ctx.insurance_queue.append([item_name, difference])
-
-        elif item_data.type in [
-            "Compass",
-            "Map",
-        ]:
-            if (
-                check_dungeon_item_count(item_name, NODES_START_ADDR, ctx.current_node)
-                == 0
-            ):
-                ctx.insurance_queue.append([item_name, 1])
-
-        elif item_data.type in [
-            "Heart",
-        ]:
-            # Only try to give heart pieces and not containers
-            if item_name != "Piece of Heart":
-                continue
-
-            actual_heart_pieace_count = read_short(SAVE_FILE_ADDR)
-            heart_piece_count = 0
-            heart_container_count = 0
-            for item in ctx.items_received:
-                if item.item == TPItem.get_apid(ITEM_TABLE["Piece of Heart"].code):
-                    heart_piece_count += 1
-                if item.item == TPItem.get_apid(ITEM_TABLE["Heart Container"].code):
-                    heart_container_count += 1
-
-            heart_difference = (
-                (heart_container_count * 5) + heart_piece_count + 15
-            ) - actual_heart_pieace_count
-
-            if heart_difference > 0:
-                ctx.insurance_queue.append([item_name, heart_difference])
-        else:
-            assert (
-                False
-            ), f"[Twilight Princess Client] {item_name=} has an invalid type {item_data.type}"
-
+        ctx.insurance_queue.append([item_name, item_count])
         # Validation completed so wait until starting again
         ctx.validation_pause.set()
 
@@ -817,8 +887,8 @@ async def validate_item(ctx: TPContext) -> None:
                     while not await _give_items(ctx, item_give_list):
                         await asyncio.sleep(0.5)
 
-        # Set the timer for validation to start again
-        ctx.validation_timer = time.time()
+    # Set the timer for validation to start again
+    ctx.validation_time_start = time.time()
 
 
 async def check_locations(ctx: TPContext) -> None:
@@ -1126,7 +1196,13 @@ def _check_status() -> bool:
     mDemoType = read_short(link_actr + 0x604)
     mEventId = read_short(link_actr + 0x7BE)
 
-    return mEventStatus == 0 and mDemoType == 0 and mEventId == 0
+    result = mEventStatus == 0 and mDemoType == 0 and mEventId == 0
+
+    if result:
+        if DEBUGGING:
+            logger.info("Debug: Got status passed")
+
+    return result
 
 
 async def check_key_counts(ctx: TPContext) -> None:
@@ -1164,7 +1240,7 @@ async def dolphin_sync_task(ctx: TPContext) -> None:
                         ctx.server_data_sent = True
                     await give_items(ctx)
                     await check_locations(ctx)
-                    await validate_item(ctx)
+                    await validate_items(ctx)
                 else:
                     if not ctx.auth:
                         ctx.auth = read_string(SLOT_NAME_ADDR, 0x40)
