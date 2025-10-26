@@ -42,7 +42,7 @@ CONNECTION_LOST_STATUS = "Dolphin connection was lost. Please restart your emula
 CONNECTION_CONNECTED_STATUS = "Dolphin connected successfully."
 CONNECTION_INITIAL_STATUS = "Dolphin connection has not been initiated."
 
-VALIDATION_TIME = 5
+VALIDATION_TIME = 10
 
 # CURR_HEALTH_ADDR = 0x804061C2
 # CURR_NODE_ADDR = 0x80406B38
@@ -175,6 +175,7 @@ class TPCommandProcessor(ClientCommandProcessor):
 
     @mark_raw
     def _cmd_validate(self, item_name: str = "") -> None:
+        """Debug command to check how many items there should be vs how many you have in game"""
 
         if self.ctx.dolphin_status != CONNECTION_CONNECTED_STATUS:
             logger.info("please connect dolphin first")
@@ -187,6 +188,22 @@ class TPCommandProcessor(ClientCommandProcessor):
         logger.info(
             f"Link has {_validate_item(item_name, self.ctx, True)} x {item_name}"
         )
+
+    @mark_raw
+    def _cmd_validation_time(self, time: str = "10") -> None:
+        """Change the time between validation of links inventory. Time must be a number (Default is 10s)"""
+        try:
+            num = int(time)
+
+            if num <= 0.1:
+                logger.info("Please choose a number greater then 0.1")
+                return
+
+            logger.info(f"Setting validation to occur every {num}s")
+            global VALIDATION_TIME
+            VALIDATION_TIME = num
+        except ValueError:
+            logger.info("Invalid input: cannot convert to integer")
 
 
 class TPContext(CommonContext):
