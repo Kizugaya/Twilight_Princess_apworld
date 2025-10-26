@@ -195,8 +195,8 @@ class TPCommandProcessor(ClientCommandProcessor):
         try:
             num = int(time)
 
-            if num <= 0.1:
-                logger.info("Please choose a number greater then 0.1")
+            if num <= 0:
+                logger.info("Please choose a number greater then 0")
                 return
 
             logger.info(f"Setting validation to occur every {num}s")
@@ -905,6 +905,25 @@ async def validate_items(ctx: TPContext) -> None:
 
     # Set the timer for validation to start again
     ctx.validation_time_start = time.time()
+
+
+def _get_heart_diff(ctx: TPContext) -> int:
+    """Returns the difference between expected and actual heart counts"""
+
+    actual_heart_pieace_count = read_short(SAVE_FILE_ADDR)
+    heart_piece_count = 0
+    heart_container_count = 0
+    for item in ctx.items_received:
+        if item.item == ITEM_TABLE["Piece of Heart"].code + ITEM_APID_BASE:
+            heart_piece_count += 1
+        if item.item == ITEM_TABLE["Heart Container"].code + ITEM_APID_BASE:
+            heart_container_count += 1
+
+    heart_difference = (
+        (heart_container_count * 5) + heart_piece_count + 15
+    ) - actual_heart_pieace_count
+
+    return heart_difference
 
 
 async def check_locations(ctx: TPContext) -> None:
