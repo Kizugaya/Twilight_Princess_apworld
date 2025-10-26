@@ -1,7 +1,6 @@
 import asyncio
 from collections import deque
 from copy import deepcopy
-import threading
 import time
 import traceback
 from typing import TYPE_CHECKING, Any, Optional
