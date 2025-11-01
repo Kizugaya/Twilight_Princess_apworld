@@ -8,6 +8,7 @@ from Fill import fill_restrictive
 from BaseClasses import CollectionState, Item, LocationProgressType
 from BaseClasses import ItemClassification as IC
 from BaseClasses import Tutorial
+from Utils import visualize_regions
 from .ClientUtils import VERSION
 from .Items import (
     ITEM_TABLE,
@@ -1409,6 +1410,18 @@ class TPWorld(World):
         )
         with open(file_path, "w") as f:
             f.write(f"{setting_string},{item_str}")
+
+        puml_path = file_path = os.path.join(
+            output_directory, f"{multiworld.get_out_file_name_base(player)}.puml"
+        )
+        visualize_regions(
+            self.multiworld.get_region("Menu", self.player),
+            puml_path,
+            show_entrance_names=True,
+            regions_to_highlight=self.multiworld.get_all_state(
+                self.player
+            ).reachable_regions[self.player],
+        )
 
     def extend_hint_information(self, hint_data: dict[int, dict[int, str]]) -> None:
         """

@@ -3,6 +3,7 @@ from collections import deque
 from copy import deepcopy
 import time
 import traceback
+import math
 from typing import TYPE_CHECKING, Any, Optional
 
 from MultiServer import mark_raw
@@ -319,7 +320,9 @@ class TPContext(CommonContext):
                     assert isinstance(
                         item, NetworkItem
                     ), f"[Twilight Princess Client] Recived an item the is not a Network Item {item=}"
-                    self.items_received.append(item)
+
+                    # Dont add to the list as common alreadyy does
+                    # self.items_received.append(item)
                     if DEBUGGING:
                         logger.info(
                             f"Debug: Recieved {item=} from server \nAnd item in items_receiveced {item in self.items_received}"
@@ -508,8 +511,8 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
     if not await check_ingame(ctx):
         return False
     if not _check_status():
-        if DEBUGGING:
-            logger.info("Debug: Tried to give items but failed status check")
+        # if DEBUGGING:
+        #     logger.info("Debug: Tried to give items but failed status check")
         return False
 
     for item_name in items:
@@ -523,8 +526,6 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
         item_stack_addr = ITEM_WRITE_ADDR + i
         if read_byte(item_stack_addr) != 0x00:
             return False
-
-    ctx.validation_time_start = time.time()
 
     # Now its empty
     # Add items starting at 0x8F0 so that it is given first
@@ -545,6 +546,9 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
 
         write_byte(item_stack_addr, ITEM_TABLE[items[i]].item_id)
     # Now the queue is full and all items are added
+
+    ctx.validation_time_start = time.time()
+
     return True
 
 
@@ -633,6 +637,7 @@ async def give_items(ctx: TPContext) -> None:
             elif item_data.type in [
                 "Heart",
             ]:
+                continue
                 actual_heart_pieace_count = read_short(SAVE_FILE_ADDR)
                 heart_container_count = sum(
                     [
@@ -884,7 +889,21 @@ async def validate_items(ctx: TPContext) -> None:
                 f"Debug: validation found you are missing {item_count} x {item_name}"
             )
 
-        ctx.insurance_queue.append([item_name, item_count])
+        # Give Heart containers when possible to help things
+        if item_name == "Piece of Heart" and item_count >= 5:
+            full_hearts = math.floor(item_count / 5)
+            remainder = item_count % 5
+
+            assert (
+                (full_hearts * 5) + remainder
+            ) == item_count, f"The math is bad try again {((full_hearts * 5) + remainder)=} {item_count=}"
+
+            ctx.insurance_queue.append(["Heart Container", full_hearts])
+            if remainder > 0:
+                ctx.insurance_queue.append(["Piece of Heart", remainder])
+        else:
+            ctx.insurance_queue.append([item_name, item_count])
+
         # Validation completed so wait until starting again
         ctx.validation_pause.set()
 
@@ -893,18 +912,37 @@ async def validate_items(ctx: TPContext) -> None:
         while len(ctx.insurance_queue) > 0:
 
             item_name, count = ctx.insurance_queue.pop()
+            if DEBUGGING:
+                logger.info(f"Debug: Popped {item_name} x {count} from insurance queue")
 
             assert count > 0
             for _ in range(count):
 
                 item_give_list.append(item_name)
+                if DEBUGGING:
+                    logger.info(f"Adding {item_name=} into the queue")
 
                 if len(item_give_list) == 8 or len(ctx.insurance_queue) <= 0:
                     while not await _give_items(ctx, item_give_list):
                         await asyncio.sleep(0.5)
+                    item_give_list = []
 
     # Set the timer for validation to start again
     ctx.validation_time_start = time.time()
+
+
+def convert_heart_count(hearts: int) -> tuple[int, int]:
+
+    full_hearts = math.floor(hearts / 5)
+    remainder = hearts % 5
+
+    assert (
+        (full_hearts * 5) + remainder
+    ) == hearts, (
+        f"The math is bad try again {((full_hearts * 5) + remainder)=} {hearts=}"
+    )
+
+    return [full_hearts, remainder]
 
 
 def _get_heart_diff(ctx: TPContext) -> int:
@@ -1005,9 +1043,17 @@ async def check_locations(ctx: TPContext) -> None:
             assert "TP_" not in data["key"], f"{data=}"
             new_key = f"TP_{ctx.team}_{ctx.slot}_{data["key"]}"
             ctx.server_data[i]["key"] = new_key
-            new_server_data_copy[new_key] = (
-                False if "Current" not in new_key else "Menu"
-            )
+            new_value = None
+            if "Current" not in new_key:
+                new_value = False
+            elif data["Region"] == "Room":
+                new_value = 0
+            else:
+                new_value = "Menu"
+
+            assert new_value is not None, f"{new_key}"
+
+            new_server_data_copy[new_key] = new_value
         ctx.server_data_built = True
         ctx.server_data_copy = new_server_data_copy
 
@@ -1094,6 +1140,30 @@ async def check_locations(ctx: TPContext) -> None:
                     }
                 )
                 results.append({server_copy_key: new_node_str})
+        elif data["Region"] == "Room":
+            assert isinstance(
+                server_copy_value, int
+            ), f"{server_copy_key=}  {server_copy_value}"
+
+            current_room = read_byte(SAVE_FILE_ADDR + 0x27220)
+
+            assert isinstance(current_room, int), f"{current_room=}"
+
+            if current_room != server_copy_value:
+                if DEBUGGING:
+                    logger.info(
+                        f"Debug: {server_copy_key} Ready to be set to {current_room}"
+                    )
+                messages.append(
+                    {
+                        "cmd": "Set",
+                        "key": data["key"],
+                        "default": data["default"],
+                        "want_reply": False,
+                        "operations": [{"operation": "replace", "value": current_room}],
+                    }
+                )
+                results.append({server_copy_key: current_room})
         elif data["Region"] == "Stage":
             assert isinstance(server_copy_value, str), f"{server_copy_key=}"
 
@@ -1233,9 +1303,9 @@ def _check_status() -> bool:
 
     result = mEventStatus == 0 and mDemoType == 0 and mEventId == 0
 
-    if result:
-        if DEBUGGING:
-            logger.info("Debug: Got status passed")
+    # if result:
+    #     if DEBUGGING:
+    #         logger.info("Debug: Got status passed")
 
     return result
 
