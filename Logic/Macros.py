@@ -3,7 +3,8 @@ from ..Items import GoldenBugs, TPItem
 from ..RoomFunctions import RoomFunctions
 from ..options import FaronWoodsLogic
 
-#region Glichless Logic
+
+# region Glichless Logic
 def can_use(state: CollectionState, player: int, item: str):
     if isinstance(item, str):
         return state.has(item, player)
@@ -1701,8 +1702,10 @@ def can_get_bug_with_lantern(state: CollectionState, player: int):
     # TODO: If option to not have bug models replaced becomes a thing, this function can be useful
     return False
 
-#endregion
-#region Gliched Logic
+
+# endregion
+# region Gliched Logic
+
 
 def has_sword_or_BS(state: CollectionState, player: int):
     return has_sword(state, player) or state.has("Progressive Hidden Skill", player, 3)

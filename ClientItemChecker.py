@@ -117,7 +117,7 @@ def check_item_count(item_name: str, base_addr: int) -> int:
             return 0
 
         case "Slingshot":
-            if check_flag(0x1, base_addr + 0xD8):
+            if check_flag(0x8, base_addr + 0xD6):
                 return 1
             return 0
 

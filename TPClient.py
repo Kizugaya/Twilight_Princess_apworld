@@ -216,7 +216,7 @@ class TPContext(CommonContext):
 
     command_processor = TPCommandProcessor
     game: str = "Twilight Princess"
-    items_handling: int = 0b111
+    items_handling: int = 0b011
 
     def __init__(self, server_address: Optional[str], password: Optional[str]) -> None:
         """
