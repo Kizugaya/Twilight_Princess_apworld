@@ -812,10 +812,20 @@ def _validate_item(
         "Compass",
         "Map",
     ]:
-        if check_dungeon_item_count(item_name, NODES_START_ADDR, ctx.current_node) == 0:
-            return 1
+        item_count = check_dungeon_item_count(
+            item_name, NODES_START_ADDR, ctx.current_node
+        )
+
+        expected_item_count = 0
+        for item in ctx.items_received:
+            if item.item == item_data.code + ITEM_APID_BASE:
+                expected_item_count += 1
+        expected_item_count = min(expected_item_count, item_data.quantity)
+
+        if descriptive:
+            return expected_item_count, item_count
         else:
-            return 0
+            return expected_item_count - item_count
 
     elif item_data.type in [
         "Heart",

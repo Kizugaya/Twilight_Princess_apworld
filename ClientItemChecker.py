@@ -2,7 +2,7 @@ import dolphin_memory_engine
 
 from .Locations import NodeID  # type: ignore
 
-ACTIVE_SLOT_OFFSET = 0x958
+ACTIVE_SLOT_OFFSET = 0x768
 
 
 def check_flag(flag: int, address: int) -> bool:
