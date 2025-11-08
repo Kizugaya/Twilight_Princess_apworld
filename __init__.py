@@ -1374,6 +1374,7 @@ class TPWorld(World):
                 "settings": self.get_settings_map(),
                 "ItemPlacements": {},
             },
+            "LocationClassification": {},
         }
 
         # Fill out the itemPlacements to match off of to debug
@@ -1606,7 +1607,16 @@ class TPWorld(World):
             "World Version": VERSION,
             "DeathLink": self.options.death_link.value,
             "Settings": self.get_settings_map(),
+            "LocationClassification": {},
         }
+
+        for location in self.get_locations():
+            location_classification = "Default"
+            if location.progress_type == LocationProgressType.PRIORITY:
+                location_classification = "Priority"
+            elif location.progress_type == LocationProgressType.EXCLUDED:
+                location_classification = "Excluded"
+            slot_data["LocationClassification"][location.name] = location_classification
 
         return slot_data
 
