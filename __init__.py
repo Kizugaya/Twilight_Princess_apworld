@@ -183,7 +183,8 @@ class TPWorld(World):
                     and options.skip_arbiters_grounds_entrance
                 ):
                     nonprogress_locations.add(location)
-                progress_locations.add(location)
+                else:
+                    progress_locations.add(location)
             else:
                 nonprogress_locations.add(location)
 
