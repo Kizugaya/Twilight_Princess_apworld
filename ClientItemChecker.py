@@ -311,7 +311,7 @@ def check_item_count(item_name: str, base_addr: int) -> int:
             return dolphin_memory_engine.read_byte(base_addr + 0x10C)
 
         case "Gate Keys":
-            if check_flag(0x8, base_addr + 0xE8):
+            if check_flag(0x8, base_addr + 0xE9):
                 return 1
             return 0
 
