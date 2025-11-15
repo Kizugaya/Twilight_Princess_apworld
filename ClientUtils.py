@@ -1,6 +1,6 @@
 ITEM_APID_BASE = 2320000
 
-VERSION = "v0.3.0"
+VERSION = "v0.4.0"
 
 Settings_Format = {
     "Golden Bugs Shuffled": "Yes/No",
