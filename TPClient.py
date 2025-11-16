@@ -329,7 +329,9 @@ class TPContext(CommonContext):
                         )
 
                     self.last_received_index += 1
-                    if item.player != self.slot:  # Don't give own items
+                    if (
+                        item.player != self.slot or item.location == -1
+                    ):  # Don't give own items unless cheated in
                         if DEBUGGING:
                             logger.info(f"Debug: Adding into the queue {item=}")
                         self.item_queue.append((item, self.last_received_index))
@@ -1053,13 +1055,7 @@ async def check_locations(ctx: TPContext) -> None:
             assert "TP_" not in data["key"], f"{data=}"
             new_key = f"TP_{ctx.team}_{ctx.slot}_{data["key"]}"
             ctx.server_data[i]["key"] = new_key
-            new_value = None
-            if "Current" not in new_key:
-                new_value = False
-            elif data["Region"] == "Room":
-                new_value = 0
-            else:
-                new_value = "Menu"
+            new_value = data["default"]
 
             assert new_value is not None, f"{new_key}"
 
@@ -1153,7 +1149,7 @@ async def check_locations(ctx: TPContext) -> None:
         elif data["Region"] == "Room":
             assert isinstance(
                 server_copy_value, int
-            ), f"{server_copy_key=}  {server_copy_value}"
+            ), f"{server_copy_key=}, {server_copy_value=}"
 
             current_room = read_byte(SAVE_FILE_ADDR + 0x27220)
 
@@ -1175,9 +1171,14 @@ async def check_locations(ctx: TPContext) -> None:
                 )
                 results.append({server_copy_key: current_room})
         elif data["Region"] == "Stage":
-            assert isinstance(server_copy_value, str), f"{server_copy_key=}"
+            assert isinstance(
+                server_copy_value, str
+            ), f"{server_copy_key=}, {server_copy_value=}"
 
             result = read_string(SAVE_FILE_ADDR + 0x58, 8)
+
+            if result.startswith("D_MN") and len(result) > 6:
+                result = result[:5]
 
             assert isinstance(result, str), f"{result=}"
             assert result in STAGE_TO_NAME, f"{result=}"
@@ -1200,6 +1201,28 @@ async def check_locations(ctx: TPContext) -> None:
                     }
                 )
                 results.append({server_copy_key: current_stage_str})
+        elif data["Region"] == "Floor":
+            assert isinstance(
+                server_copy_value, int
+            ), f"{server_copy_key=}, {server_copy_value=}"
+
+            result = read_byte(SAVE_FILE_ADDR + 0x4AC98)
+
+            assert isinstance(result, int), f"{result=}"
+
+            if result != server_copy_value:
+                if DEBUGGING:
+                    logger.info(f"Debug: {server_copy_key} Ready to be set to {result}")
+                messages.append(
+                    {
+                        "cmd": "Set",
+                        "key": data["key"],
+                        "default": data["default"],
+                        "want_reply": False,
+                        "operations": [{"operation": "replace", "value": result}],
+                    }
+                )
+                results.append({server_copy_key: result})
         else:
             assert False, f"{data=}"
 

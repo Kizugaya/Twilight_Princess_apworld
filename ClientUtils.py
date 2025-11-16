@@ -296,6 +296,13 @@ server_data = [
         "Region": "Room",  # This will search +0x58 for the 8 byte string for links return place
     },
     {
+        "key": "Current Floor",
+        "default": -1,
+        "want_reply": False,
+        "operations": [],
+        "Region": "Floor",  # This will search +0x58 for the 8 byte string for links return place
+    },
+    {
         "key": "Diababa Defeated",
         "default": False,
         "want_reply": False,
