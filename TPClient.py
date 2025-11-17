@@ -1175,7 +1175,7 @@ async def check_locations(ctx: TPContext) -> None:
                 server_copy_value, str
             ), f"{server_copy_key=}, {server_copy_value=}"
 
-            result = read_string(SAVE_FILE_ADDR + 0x58, 8)
+            result = read_string(SAVE_FILE_ADDR + 0x4E00, 8)
 
             if result.startswith("D_MN") and len(result) > 6:
                 result = result[:5]
