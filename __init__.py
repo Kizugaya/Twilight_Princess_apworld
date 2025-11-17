@@ -1611,11 +1611,12 @@ class TPWorld(World):
         }
 
         for location in self.get_locations():
-            location_classification = "Default"
             if location.progress_type == LocationProgressType.PRIORITY:
                 location_classification = "Priority"
             elif location.progress_type == LocationProgressType.EXCLUDED:
                 location_classification = "Excluded"
+            else:
+                continue
             slot_data["LocationClassification"][location.name] = location_classification
 
         return slot_data
