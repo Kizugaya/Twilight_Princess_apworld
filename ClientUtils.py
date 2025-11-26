@@ -108,6 +108,7 @@ STAGE_TO_NAME = {
     "R_SP110": "Death Mountain Sumo Hall",
     "R_SP116": "Hyrule Castle Town Interiors",
     "R_SP161": "Star Tent",
+    "R_SP160": "Aghitha's House",
     "F_SP127": "Fishing Pond",
     "F_SP128": "Hidden Village",
     "R_SP128": "Impaz's House",
