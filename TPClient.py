@@ -1177,6 +1177,7 @@ async def check_locations(ctx: TPContext) -> None:
 
             result = read_string(SAVE_FILE_ADDR + 0x4E00, 8)
 
+            # Handle the dungeon boss room stages
             if result.startswith("D_MN") and len(result) > 6:
                 result = result[:5]
 
