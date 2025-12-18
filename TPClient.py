@@ -675,18 +675,23 @@ async def give_items(ctx: TPContext) -> None:
                 ), f"[Twilight Princess Client] {item_name=} has an invalid type {item_data.type}"
 
             # Only try to give a full queue or whatever is there
-            if len(item_give_queue) == 8 or (
-                item_index >= ctx.last_received_index - 1 and len(item_give_queue) > 0
-            ):
+            if len(item_give_queue) == 8:
                 if DEBUGGING:
                     logger.info(f"Debug: Queued Items to give {item_give_queue}")
                 while not await _give_items(ctx, item_give_queue):
                     await asyncio.sleep(0.5)
                 write_short(EXPECTED_INDEX_ADDR, item_index + 1)
                 item_give_queue = []
+        if len(item_give_queue) > 0:
+            assert len(item_give_queue) <= 8, f"[Twilight Princess Client]"
+            if DEBUGGING:
+                logger.info(f"Debug: Queued Items to give {item_give_queue}")
+            while not await _give_items(ctx, item_give_queue):
+                await asyncio.sleep(0.5)
+            write_short(EXPECTED_INDEX_ADDR, item_index + 1)
         assert (
-            len(item_give_queue) == 0
-        ), f"[Twilight Princess Client] item give queue is not empty at the end {item_give_queue=}\n{item_index=} - {ctx.last_received_index=}"
+            len(ctx.item_queue) == 0
+        ), f"[Twilight Princess Client] item give queue is not empty at the end {ctx.item_queue=}\n{item_index=} - {ctx.last_received_index=}"
 
         # Now validation should be good to occur
         if ctx.validation_pause.is_set():
@@ -1179,7 +1184,7 @@ async def check_locations(ctx: TPContext) -> None:
 
             # Handle the dungeon boss room stages
             if result.startswith("D_MN") and len(result) > 6:
-                result = result[:5]
+                result = result[:6]
 
             assert isinstance(result, str), f"{result=}"
             assert result in STAGE_TO_NAME, f"{result=}"
