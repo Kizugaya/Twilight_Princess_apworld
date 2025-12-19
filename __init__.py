@@ -290,7 +290,6 @@ class TPWorld(World):
         # Connect the menu region to the portal locations if open map is selected
         if self.options.open_map.value == OpenMap.option_true:
             portal_regions = [
-                "Snowpeak Summit Upper",
                 "Zoras Domain Throne Room",
                 # "Upper Zoras River",
                 "Lake Hylia",
@@ -306,6 +305,12 @@ class TPWorld(World):
                 # "Mirror Chamber Upper",
                 "Ordon Spring",
             ]
+            if (
+                self.options.skip_snowpeak_entrance.vlaue
+                == SkipSnowpeakEntrance.option_false
+            ):
+                portal_regions.append("Snowpeak Summit Upper")
+
             for portal_region in portal_regions:
                 portal_exit = menu.connect(self.get_region(portal_region))
                 portal_exit.access_rule = lambda state: state.has(
