@@ -881,6 +881,11 @@ async def validate_items(ctx: TPContext) -> None:
         #     )
         return
 
+    # Only try to validate if in correct status
+    if not _check_status():
+        ctx.validation_time_start = time.time()
+        return
+
     if DEBUGGING:
         logger.info("Debug: Validating items")
 
