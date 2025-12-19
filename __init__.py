@@ -270,10 +270,6 @@ class TPWorld(World):
             self.multiworld.local_early_items[self.player]["Gale Boomerang"] = 1
             self.multiworld.local_early_items[self.player]["Lantern"] = 1
 
-        if self.options.faron_woods_logic.value == FaronWoodsLogic.option_closed:
-            self.multiworld.local_early_items[self.player]["Gale Boomerang"] = 1
-            self.multiworld.local_early_items[self.player]["Lantern"] = 1
-
     def create_regions(self) -> None:
         """
         Create and connect regions for the Twilight Princess world.
@@ -1454,40 +1450,67 @@ class TPWorld(World):
         assert name in ITEM_TABLE, f"[Twilight Princess] {name=}"
 
         adjusted_classification = None
-        # if (
-        #     # (
-        #     #     self.options.golden_bugs_shuffled.value
-        #     #     == GoldenBugsShuffled.option_false
-        #     #     and name in item_name_groups["Bugs"]
-        #     # )
-        #     # or (
-        #     #     self.options.sky_characters_shuffled.value
-        #     #     == SkyCharactersShuffled.option_false
-        #     #     and name == "Progressive Ancient Sky Book"
-        #     # )
-        #     # or (
-        #     #     self.options.poe_shuffled.value == PoeShuffled.option_false
-        #     #     and name == "Poe Soul"
-        #     # )
-        #     # or (
-        #     #     self.options.heart_piece_shuffled.value
-        #     #     == HeartPieceShuffled.option_false
-        #     #     and name in item_name_groups["Heart"]
-        #     # )
-        #     # ) or (
-        #     #     not self.options.npc_items_shuffled
-        #     #     and name in item_name_groups["NPC Items"]
-        #     # ) or (
-        #     #     not self.options.shop_items_shuffled
-        #     #     and name in item_name_groups["Shop Items"]
-        #     # ) or (
-        #     #     not self.options.hidden_skills_shuffled
-        #     #     and name == "Progressive Hidden Skill"
-        #     # ) or (
-        #     #     not self.options.overworld_shuffled
-        #     #     and name in item_name_groups["Overworld Items"]
-        # ):
-        #     adjusted_classification = IC.filler
+        if (
+            False
+            # or (
+            #     self.options.golden_bugs_shuffled.value
+            #     == GoldenBugsShuffled.option_false
+            #     and name in item_name_groups["Bugs"]
+            # )
+            # or (
+            #     self.options.sky_characters_shuffled.value
+            #     == SkyCharactersShuffled.option_false
+            #     and name == "Progressive Ancient Sky Book"
+            # )
+            # or (
+            #     self.options.poe_shuffled.value == PoeShuffled.option_false
+            #     and name == "Poe Soul"
+            # )
+            # or (
+            #     self.options.heart_piece_shuffled.value
+            #     == HeartPieceShuffled.option_false
+            #     and name in item_name_groups["Heart"]
+            # )
+            # or (
+            #     not self.options.npc_items_shuffled
+            #     and name in item_name_groups["NPC Items"]
+            # )
+            # or (
+            #     not self.options.shop_items_shuffled
+            #     and name in item_name_groups["Shop Items"]
+            # )
+            # or (
+            #     not self.options.hidden_skills_shuffled
+            #     and name == "Progressive Hidden Skill"
+            # )
+            # or (
+            #     not self.options.overworld_shuffled
+            #     and name in item_name_groups["Overworld Items"]
+            # )
+            or (
+                name == "Piece of Heart"
+                and all(
+                    [
+                        self.options.dungeons_shuffled.value
+                        == DungeonsShuffled.option_false,
+                        self.options.dungeon_rewards_progression.value
+                        == DungeonRewardsProgression.option_false,
+                        self.options.heart_piece_shuffled.value
+                        == HeartPieceShuffled.option_false,
+                        self.options.hidden_skills_shuffled.value
+                        == HiddenSkillsShuffled.option_false,
+                        self.options.npc_items_shuffled.value
+                        == NpcItemsShuffled.option_false,
+                        self.options.poe_shuffled.value == PoeShuffled.option_true,
+                        self.options.shop_items_shuffled.value
+                        == ShopItemsShuffled.option_false,
+                        self.options.sky_characters_shuffled.value
+                        == SkyCharactersShuffled.option_false,
+                    ]
+                )
+            )
+        ):
+            adjusted_classification = IC.filler
 
         return adjusted_classification
 

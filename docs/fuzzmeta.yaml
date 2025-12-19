@@ -1,6 +1,11 @@
 Twilight Princess:
   Twilight Princess:
-
+  death_link: false
+  instant_message_text: false
+  modify_shop_models: false
+  skip_major_cutscenes: false
+  skip_minor_cutscenes: false
+  increase_spinner_speed: false
   # TPRando Settings
   # open_map: false
   # faron_woods_logic: closed # Need to craft generation to be consistent
