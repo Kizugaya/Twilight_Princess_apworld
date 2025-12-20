@@ -306,7 +306,7 @@ class TPWorld(World):
                 "Ordon Spring",
             ]
             if (
-                self.options.skip_snowpeak_entrance.vlaue
+                self.options.skip_snowpeak_entrance.value
                 == SkipSnowpeakEntrance.option_false
             ):
                 portal_regions.append("Snowpeak Summit Upper")
