@@ -242,7 +242,6 @@ class SmallKeysOnBosses(Toggle):
 
 class CastleRequirements(Choice):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     Controls requirements for accessing Hyrule Castle.
 
     - Open: No requirements
@@ -267,7 +266,6 @@ class CastleRequirements(Choice):
 
 class PalaceRequirements(Choice):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     Controls requirements for accessing Palace of Twilight.
 
     - Open: No requirements
@@ -290,7 +288,6 @@ class PalaceRequirements(Choice):
 
 class FaronWoodsLogic(Choice):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     Controls logic for accessing Faron Woods.
 
     - Open: No special requirements
@@ -313,7 +310,6 @@ class FaronWoodsLogic(Choice):
 # Timesavers
 # class SkipPrologue(Toggle):
 #     """
-#     NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
 #     Controls whether the prologue is skipped.
 #     """
 
@@ -323,7 +319,6 @@ class FaronWoodsLogic(Choice):
 
 # class FaronTwilightCleared(Toggle):
 #     """
-#     NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
 #     Controls whether Faron Twilight is cleared.
 #     """
 
@@ -333,7 +328,6 @@ class FaronWoodsLogic(Choice):
 
 # class EldinTwilightCleared(Toggle):
 #     """
-#     NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
 #     Controls whether Eldin Twilight is cleared.
 #     """
 
@@ -343,7 +337,6 @@ class FaronWoodsLogic(Choice):
 
 # class LanayruTwilightCleared(Toggle):
 #     """
-#     NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
 #     Controls whether Lanayru Twilight is cleared.
 #     """
 
@@ -353,7 +346,6 @@ class FaronWoodsLogic(Choice):
 
 # class SkipMdh(Toggle):
 #     """
-#     NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
 #     Controls whether the Midna's Darkest Hour is skipped.
 #     """
 
@@ -366,7 +358,6 @@ class FaronWoodsLogic(Choice):
 
 class SkipMinorCutscenes(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, minor cutscenes are skipped.
     """
 
@@ -376,7 +367,6 @@ class SkipMinorCutscenes(Toggle):
 
 class FastIronBoots(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, movement is not slowed when wearing Iron Boots.
     """
 
@@ -386,7 +376,6 @@ class FastIronBoots(Toggle):
 
 class QuickTransform(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, you can quickly transform by pressing R + Y.
     """
 
@@ -396,7 +385,6 @@ class QuickTransform(Toggle):
 
 class TransformAnywhere(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, the player can transform anywhere.
     """
 
@@ -406,7 +394,6 @@ class TransformAnywhere(Toggle):
 
 class IncreaseWalletCapacity(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, the wallet capacity is increased.
     """
 
@@ -416,7 +403,6 @@ class IncreaseWalletCapacity(Toggle):
 
 class ModifyShopModels(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, swap shop models with the items that are placed there.
     """
 
@@ -426,7 +412,6 @@ class ModifyShopModels(Toggle):
 
 class GoronMinesEntrance(Choice):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     Controls requirements for accessing the Goron Mines.
 
     - **Closed:** Player must wrestle Gor Coron to enter the mines.
@@ -443,7 +428,6 @@ class GoronMinesEntrance(Choice):
 
 class SkipLakebedEntrance(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, the Lakebed does not require water bombs.
     """
 
@@ -453,7 +437,6 @@ class SkipLakebedEntrance(Toggle):
 
 class SkipArbitersGroundsEntrance(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, entering Arbiters Grounds does not require defeating King Bublin.
     """
 
@@ -463,7 +446,6 @@ class SkipArbitersGroundsEntrance(Toggle):
 
 class SkipSnowpeakEntrance(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, Snowpeak does not require Reekfish Scent.
     """
 
@@ -473,7 +455,6 @@ class SkipSnowpeakEntrance(Toggle):
 
 class TotEntrance(Choice):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     Controls requirements for accessing the Temple of Time.
 
     - **Closed:** Player must defeat Skull Kid to access Sacred Grove. Master Sword needed to access Past.
@@ -490,7 +471,6 @@ class TotEntrance(Choice):
 
 class SkipCityInTheSkyEntrance(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, City in The Sky does not require filled Skybook.
     """
 
@@ -500,7 +480,6 @@ class SkipCityInTheSkyEntrance(Toggle):
 
 class InstantMessageText(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, message text is instant.
     """
 
@@ -510,7 +489,6 @@ class InstantMessageText(Toggle):
 
 class OpenMap(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, Map areas are unlocked and portals unlocked.
     """
 
@@ -520,7 +498,6 @@ class OpenMap(Toggle):
 
 class IncreaseSpinnerSpeed(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, spinner speed is increased.
     *Spinner speed not taken into account in logic.
     """
@@ -531,7 +508,6 @@ class IncreaseSpinnerSpeed(Toggle):
 
 class OpenDoorOfTime(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, the Door of Time is open.
     """
 
@@ -541,7 +517,6 @@ class OpenDoorOfTime(Toggle):
 
 class DamageMagnification(Choice):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     Multiplies the damage the player takes.
     """
 
@@ -556,7 +531,6 @@ class DamageMagnification(Choice):
 
 class BonksDoDamage(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, bonks do damage.
     """
 
@@ -566,7 +540,6 @@ class BonksDoDamage(Toggle):
 
 class SkipMajorCutscenes(Toggle):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     If enabled, major cutscenes are skipped.
     """
 
@@ -576,7 +549,6 @@ class SkipMajorCutscenes(Toggle):
 
 class StartingToD(Choice):
     """
-    NON-DEFAULT CHOICE NOT REPRESENTED IN GAME (must self enforce if changed from default)
     Controls the starting time of day.
     """
 
