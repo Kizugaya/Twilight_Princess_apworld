@@ -1,11 +1,13 @@
 Twilight Princess:
-  Twilight Princess:
+  # Twilight Princess:
+  # Non logic Settings
   death_link: false
   instant_message_text: false
   modify_shop_models: false
   skip_major_cutscenes: false
   skip_minor_cutscenes: false
   increase_spinner_speed: false
+
   # TPRando Settings
   # open_map: false
   # faron_woods_logic: closed # Need to craft generation to be consistent
@@ -22,7 +24,7 @@ Twilight Princess:
   # increase_wallet: true
   # damage_magnification: vanilla
   # bonks_do_damage: false
-  overworld_shuffled: true
+  # overworld_shuffled: true
   # dungeons_shuffled: true
 
   # AP world settings
