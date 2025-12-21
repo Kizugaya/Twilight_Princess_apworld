@@ -1665,7 +1665,9 @@ def can_unlock_lanayru_map(state: CollectionState, player: int):
 
 
 def can_unlock_snowpeak_map(state: CollectionState, player: int):
-    if state._tp_open_map(player) or state._tp_skip_snowpeak_entrance(player):
+    if (
+        state._tp_open_map(player) and not state._tp_skip_snowpeak_entrance(player)
+    ) or state._tp_skip_snowpeak_entrance(player):
         return True
     for mapRoom in RoomFunctions.SnowpeakMapRooms:
         if state.can_reach_region(mapRoom):
