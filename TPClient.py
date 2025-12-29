@@ -206,6 +206,22 @@ class TPCommandProcessor(ClientCommandProcessor):
         except ValueError:
             logger.info("Invalid input: cannot convert to integer")
 
+    @mark_raw
+    def _cmd_give(self, item: str) -> None:
+        """Cheat in an item. Note: Use the EXACT! name of item, (can be found in the item.py file on github)"""
+        try:
+            assert isinstance(item, str)
+            assert item in ITEM_TABLE.keys()
+            logger.info("Giving link, " + item)
+
+            async def try_give():
+                while not await _give_items(self.ctx, [item]):
+                    await asyncio.sleep(0.5)
+
+            asyncio.create_task(try_give())
+        except AssertionError:
+            logger.info("Invalid item please use exact item name")
+
 
 class TPContext(CommonContext):
     """
