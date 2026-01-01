@@ -112,7 +112,7 @@ def check_item_count(item_name: str, base_addr: int) -> int:
         case "Progressive Fishing Rod":
             if check_flag(0x20, base_addr + 0xD0):  # Coral Earing
                 return 2
-            if check_flag(0x8, base_addr + 0xD6):  # Fishing Rod
+            if check_flag(0x4, base_addr + 0xD6):  # Fishing Rod
                 return 1
             return 0
 
