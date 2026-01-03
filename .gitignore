@@ -10,5 +10,6 @@ thing.py
 scripts.txt
 /tests/logs.log
 fuzzParser.py
+fuzzmeta.yaml
 
 __pycache__
