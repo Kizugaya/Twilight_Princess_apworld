@@ -399,3 +399,29 @@ def base_server_data_connection(team: int, slot: int):
         }
         for data in server_data
     ]
+
+
+KEY_TO_OFFSET = {
+    "Forest Temple Small Key": 0,
+    "Goron Mines Small Key": 1,
+    "Lakebed Temple Small Key": 2,
+    "Arbiters Grounds Small Key": 3,
+    "Snowpeak Ruins Small Key": 4,
+    "Temple of Time Small Key": 5,
+    "City in The Sky Small Key": 6,
+    "Palace of Twilight Small Key": 7,
+    "Hyrule Castle Small Key": 8,
+    "Gate Keys": 9,
+    "Gerudo Desert Bublin Camp Key": 10,
+    "Forest Temple Big Key": 11,
+    "Lakebed Temple Big Key": 12,
+    "Goron Mines Key Shard": 13,
+    "Arbiters Grounds Big Key": 14,
+    "Bedroom Key": 15,
+    "Temple of Time Big Key": 16,
+    "City in The Sky Big Key": 17,
+    "Palace of Twilight Big Key": 18,
+    "Hyrule Castle Big Key": 19,
+    "Ordon Pumpkin": 20,
+    "Ordon Goat Cheese": 21,
+}

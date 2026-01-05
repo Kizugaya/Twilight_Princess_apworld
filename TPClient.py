@@ -11,13 +11,7 @@ import dolphin_memory_engine
 
 from .ClientItemChecker import check_dungeon_item_count, check_item_count  # type: ignore
 
-from .ClientUtils import (
-    NODE_TO_STRING,
-    STAGE_TO_NAME,
-    VERSION,
-    base_server_data_connection,
-    server_data,
-)
+from .ClientUtils import *
 from .Items import ITEM_TABLE, LOOKUP_ID_TO_NAME, TPItem, item_factory
 from .Locations import LOCATION_TABLE, TPLocation, TPLocationType
 import Utils
@@ -549,20 +543,27 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
     # Add items starting at 0x8F0 so that it is given first
     for i in range(0, len(items)):
         item_stack_addr = ITEM_WRITE_ADDR + i
+        item = items[i]
         # Just incase something happens
         assert (
             read_byte(item_stack_addr) == 0x00
         ), f"Tried to add to the queue but it was not empty"
 
         if DEBUGGING:
-            logger.info(f"Debug: Giving {items[i]} into queue")
+            logger.info(f"Debug: Giving {item} into queue")
 
-        if items[i] == "Victory":
+        if item == "Victory":
             if not ctx.finished_game:
                 logger.info("Player got victory but the game is not complete in client")
             continue
 
         write_byte(item_stack_addr, ITEM_TABLE[items[i]].item_id)
+
+        if item in KEY_TO_OFFSET.keys():
+            key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item]
+            key_count = read_byte(key_offset)
+            write_byte(key_count + 1)
+
     # Now the queue is full and all items are added
 
     ctx.validation_time_start = time.time()
@@ -603,14 +604,14 @@ async def give_items(ctx: TPContext) -> None:
                 "Rupee",
                 "Ammo",
                 "Trap",
-                "Small key",  # TODO: Insure Keys
-                "Big Key",
                 "Book",
             ]:
                 item_give_queue.append(item_name)
 
             # Items that we need to check the count of before giving to link
             elif item_data.type in [
+                "Small key",  # TODO: Insure Keys
+                "Big Key",
                 "Item",
                 "Bottle",
                 "Bug",
@@ -798,14 +799,14 @@ def _validate_item(
         "Ammo",
         "Trap",
         "Event",
-        "Small key",  # TODO: Insure Keys
-        "Big Key",
         "Book",
     ]:
         # Skip all non insurable items
         return -1
 
     elif item_data.type in [
+        "Small key",  # TODO: Insure Keys
+        "Big Key",
         "Item",
         "Bottle",
         "Bug",
