@@ -333,13 +333,6 @@ def check_item_count(item_name: str, save_file_addr: int) -> int:
                 return 1
             else:
                 return 0
-
-        case "Gerudo Desert Bublin Camp Key":
-            assert False, "find this in memory"
-            if check_flag(0x80, save_file_addr + 0xE8):
-                return 1
-            return 0
-
         case _:
             if item_name in KEY_TO_OFFSET.keys():
                 key_offset = save_file_addr + 0x901 + KEY_TO_OFFSET[item_name]

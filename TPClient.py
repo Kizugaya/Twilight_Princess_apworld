@@ -562,7 +562,7 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
         if item in KEY_TO_OFFSET.keys():
             key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item]
             key_count = read_byte(key_offset)
-            write_byte(key_count + 1)
+            write_byte(key_offset, key_count + 1)
 
     # Now the queue is full and all items are added
 
