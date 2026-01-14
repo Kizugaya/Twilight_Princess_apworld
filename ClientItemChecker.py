@@ -99,9 +99,10 @@ def check_item_count(item_name: str, save_file_addr: int) -> int:
             return 0
 
         case "Progressive Dominion Rod":
-            if check_flag(0x40, save_file_addr + 0xD7):  # Dominion Rod
+            rod = dolphin_memory_engine.read_byte(save_file_addr + 0xA4)
+            if rod == 70:  # Dominion Rod
                 return 2
-            if check_flag(0x10, save_file_addr + 0xD6):  # Powerless Dominion Rod
+            if rod == 76:  # Powerless Dominion Rod
                 return 1
             return 0
 
