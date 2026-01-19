@@ -345,6 +345,11 @@ class TPContext(CommonContext):
                         if DEBUGGING:
                             logger.info(f"Debug: Adding into the queue {item=}")
                         self.item_queue.append((item, self.last_received_index))
+                    # Add local keys to the validation count
+                    elif LOOKUP_ID_TO_NAME[item.item] in KEY_TO_OFFSET.keys():
+                        key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item]
+                        key_count = read_byte(key_offset)
+                        write_byte(key_offset, key_count + 1)
                     self.validation_pause.set()
 
     def on_deathlink(self, data: dict[str, Any]) -> None:
