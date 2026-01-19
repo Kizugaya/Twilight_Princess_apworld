@@ -1267,10 +1267,8 @@ def can_use_bottled_fairies(state: CollectionState, player: int):
     return has_bottles(state, player) and state.can_reach_region("Lake Hylia", player)
 
 
-def can_use_oil_bottle(state: CollectionState, player: int):
-    return state.has("Lantern", player) and state.has(
-        "Lantern Oil (Coro Bottle)", player
-    )
+# def can_use_oil_bottle(state: CollectionState, player: int):
+#     return has_bottle(state, player)
 
 
 def can_launch_bombs(state: CollectionState, player: int):
