@@ -47,6 +47,7 @@ class GoldenBugsShuffled(Toggle):
     """
     If enabled, golden bugs will be shuffled into the itempool.
     If disabled, bugs will be vanilla and agitha will not be progression
+    Note: If vanilla any precollected bugs will not be removed from vanilla locations
     """
 
     display_name = "Golden Bugs"
@@ -57,6 +58,7 @@ class SkyCharactersShuffled(Toggle):
     """
     If enabled, sky characters will be shuffled into the itempool.
     If disabled, sky characters will be vanilla.
+    Note: If vanilla any precollected sky characters will not be removed from vanilla locations
     """
 
     display_name = "Sky Characters"
@@ -95,6 +97,7 @@ class PoeShuffled(Toggle):
     """
     If enabled, Poes will be shuffled into the itempool.
     If disabled, Poes will be vanilla.
+    Note: If vanilla any precollected poes will not be removed from vanilla locations
     """
 
     display_name = "Poe Shuffled"
@@ -174,7 +177,8 @@ class SmallKeySettings(DungeonItem):
     - **Anywhere:** Small keys can be found in any progression location, if dungeons are randomized.
 
     Note:
-    Not shuffling Dungeons will overwrite this to vanilla, unless you selected start with
+    - Not shuffling Dungeons will overwrite this to vanilla, unless you selected start with
+    - If vanilla any precollected keys will not be removed from vanilla locations
     """
 
     item_name_group = "Small Keys"
@@ -192,7 +196,8 @@ class BigKeySettings(DungeonItem):
     - **Anywhere:** Big keys can be found in any progression location.
 
     Note:
-    Not shuffling Dungeons will overwrite this to vanilla, unless you selected start with
+    - Not shuffling Dungeons will overwrite this to vanilla, unless you selected start with
+    - If vanilla any precollected keys will not be removed from vanilla locations
     """
 
     item_name_group = "Big Keys"
@@ -210,7 +215,8 @@ class MapAndCompassSettings(DungeonItem):
     - **Anywhere:** Dungeon maps and compasses can be found anywhere, without restriction.
 
     Note:
-    Not shuffling Dungeons will overwrite this to vanilla, unless you selected start with
+    - Not shuffling Dungeons will overwrite this to vanilla, unless you selected start with
+    - If vanilla any precollected map or compass will not be removed from vanilla locations
     """
 
     item_name_group = "Maps and Compasses"
@@ -251,8 +257,8 @@ class CastleRequirements(Choice):
     - Vanilla: Beat Palace of Twilight
 
     Note:
-    Choosing All Dungeons or Vanilla will force dungeons items to be in Hyrule Castle if Any Dungeon is chosen for them
-        This also removes Hyrule castle from list of dungeons for other of that dungeon item to be in
+    Choosing All Dungeons or Vanilla will force Hyrule Castle to only have it's own dungeon items inside.
+        i.e. If All Dungeons and Keys Anywhere is picked Forest temple Boss key cannot be in Hyrule Castle and Hyrule Castle small key can only be in Hyrule Castle
     """
 
     display_name = "Castle Requirements"
@@ -274,8 +280,8 @@ class PalaceRequirements(Choice):
     - Vanilla: Beat City in the Sky
 
     Note:
-    Choosing Vanilla will force dungeons items to be in Palace of Twilight if Any Dungeon is chosen for them
-        This also removes Palace of Twilight from list of dungeons for other of that dungeon item to be in
+    Choosing Vanilla will force Palace of Twilight(PoT) to only have it's own dungeon items inside.
+        i.e. If Vanilla and Keys Anywhere is picked Palace of Twilight Boss key cannot be in PoT and PoT. small key can only be in PoT.
     """
 
     display_name = "Palace Requirements"
