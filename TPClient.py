@@ -325,6 +325,7 @@ class TPContext(CommonContext):
 
         elif cmd == "ReceivedItems":
             if args["index"] >= self.last_received_index:
+                # TODO: add handling for a 0 index to reset the items Recieved
                 self.last_received_index = args["index"]
                 for item in args["items"]:
                     assert isinstance(
@@ -347,7 +348,13 @@ class TPContext(CommonContext):
                         self.item_queue.append((item, self.last_received_index))
                     # Add local keys to the validation count
                     elif LOOKUP_ID_TO_NAME[item.item] in KEY_TO_OFFSET.keys():
-                        key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item]
+                        if DEBUGGING:
+                            logger.info(f"Debug: Found Key locally so adding to count")
+                        key_offset = (
+                            SAVE_FILE_ADDR
+                            + 0x901
+                            + KEY_TO_OFFSET[LOOKUP_ID_TO_NAME[item.item]]
+                        )
                         key_count = read_byte(key_offset)
                         write_byte(key_offset, key_count + 1)
                     self.validation_pause.set()
