@@ -154,10 +154,7 @@ ITEM_TABLE: dict[str, TPItemData] = {
     "Progressive Fishing Rod": TPItemData("Item", IC.progression, 41, 2, 0x4A),
     "Slingshot": TPItemData("Item", IC.progression, 44, 1, 0x4B),
     "Bomb Bag": TPItemData("Item", IC.progression, 45, 3, 0x51),
-    "Empty Bottle (Fishing Hole)": TPItemData("Bottle", IC.progression, 46, 1, 0x60),
-    "Milk (half) (Sera Bottle)": TPItemData("Bottle", IC.progression, 47, 1, 0x65),
-    "Lantern Oil (Coro Bottle)": TPItemData("Bottle", IC.progression, 48, 1, 0x9D),
-    "Great Fairy Tears (Jovani)": TPItemData("Bottle", IC.progression, 49, 1, 0x75),
+    "Progessive Bottle": TPItemData("Bottle", IC.progression, 46, 1, None),
     # Story Items fit here (useful if randomized eventually)
     # "Horse Call": TPItemData("Item", VERY_USEFUL, 53, 0, 0x84),
     "Forest Temple Small Key": TPItemData("Small key", IC.progression, 54, 4, 0x85),
@@ -264,12 +261,6 @@ LOOKUP_ID_TO_NAME: dict[int, str] = {
 }
 
 item_name_groups = {
-    "Bottles": {
-        "Empty Bottle (Fishing Hole)",
-        "Milk (half) (Sera Bottle)",
-        "Lantern Oil (Coro Bottle)",
-        "Great Fairy Tears (Jovani)",
-    },
     # "Quest Items": {
     #     "Renado's Letter",
     #     "Invoice",
@@ -426,10 +417,7 @@ ItemWheelItems = [
     "Bomb Bag",
     "Bomb Bag",
     "Bomb Bag",
-    "Empty Bottle (Fishing Hole)",
-    "Milk (half) (Sera Bottle)",
-    "Lantern Oil (Coro Bottle)",
-    "Great Fairy Tears (Jovani)",
+    "Progessive Bottle",
     "Auru's Memo",
     "Renado's Letter",  # Covers letter, invoice, statue, charm. It doesn't matter which item you have in the chain, as long as you have the slot available.
     "Horse Call",

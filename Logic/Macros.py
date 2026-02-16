@@ -1712,30 +1712,14 @@ def has_sword_or_BS(state: CollectionState, player: int):
 
 
 def has_bottle(state: CollectionState, player: int):
-    return (
-        state.has("Empty Bottle (Fishing Hole)", player)
-        or state.has("Milk (half) (Sera Bottle)", player)
-        or state.has("Great Fairy Tears (Jovani)", player)
-        or state.has("Lantern Oil (Coro Bottle)", player)
-    ) and state.has(
+    return (state.has("Progessive Bottle", player)) and state.has(
         "Lantern", player
-    )  # NOTE: Is this true?
+    )  # NOTE: Require lantern to get rid of oil
 
 
 def has_bottles(state: CollectionState, player: int):
-    n = 0
     if state.has("Lantern", player):
-        if state.has("Empty Bottle (Fishing Hole)", player):
-            n += 1
-        if state.has("Milk (half) (Sera Bottle)", player):
-            n += 1
-        if state.has("Great Fairy Tears (Jovani)", player):
-            n += 1
-        if state.has("Lantern Oil (Coro Bottle)", player):
-            n += 1
-
-    if n > 1:
-        return True
+        return state.has("Progessive Bottle", player, 2)
     return False
 
 

@@ -322,7 +322,7 @@ def check_item_count(item_name: str, save_file_addr: int) -> int:
                 return 1
             return 0
 
-        case "Empty Bottle (Fishing Hole)":
+        case "Progessive Bottle":
             if dolphin_memory_engine.read_byte(save_file_addr + 0xAA) != 255:
                 return 4
             elif dolphin_memory_engine.read_byte(save_file_addr + 0xA9) != 255:
@@ -333,6 +333,7 @@ def check_item_count(item_name: str, save_file_addr: int) -> int:
                 return 1
             else:
                 return 0
+
         case _:
             if item_name in KEY_TO_OFFSET.keys():
                 key_offset = save_file_addr + 0x901 + KEY_TO_OFFSET[item_name]

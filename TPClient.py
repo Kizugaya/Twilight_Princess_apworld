@@ -573,7 +573,18 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
                 logger.info("Player got victory but the game is not complete in client")
             continue
 
-        write_byte(item_stack_addr, ITEM_TABLE[items[i]].item_id)
+        # Handle items with multiple values that aren't in game progressive
+        if item == "Progessive Bottle":
+            if _validate_item("Progessive Bottle", ctx, True)[0] == 1:
+                write_byte(item_stack_addr, 0x9D)  # Oil
+            elif _validate_item("Progessive Bottle", ctx, True)[0] == 2:
+                write_byte(item_stack_addr, 0x65)  # Milk
+            elif _validate_item("Progessive Bottle", ctx, True)[0] == 3:
+                write_byte(item_stack_addr, 0x60)  # Emtpy
+            elif _validate_item("Progessive Bottle", ctx, True)[0] == 4:
+                write_byte(item_stack_addr, 0x75)  # Tears
+        else:
+            write_byte(item_stack_addr, ITEM_TABLE[items[i]].item_id)
 
         if item in KEY_TO_OFFSET.keys():
             key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item]
@@ -828,12 +839,6 @@ def _validate_item(
         "Bug",
         "Poe",
     ]:
-        if (
-            item_data.type == "Bottle"
-        ):  # Bottle is only non progressive that checks together
-            if item_name != "Empty Bottle (Fishing Hole)":
-                return -1
-
         actual_item_count = check_item_count(item_name, SAVE_FILE_ADDR)
 
         expected_item_count = 0
@@ -1304,7 +1309,7 @@ async def check_ingame(ctx: TPContext) -> bool:
     """
     Check if the player is currently in-game.
     If the player switches to hyrule field wait 3s to see if the node updates to the menu
-    (This check will occur only once per load to the field, but I will slow the client from working)
+    (This check will occur only once per load to the field)
 
     :return: `True` if the player is in-game, otherwise `False`.
     """
