@@ -31,11 +31,13 @@ from .ClientUtils import ITEM_APID_BASE
 if TYPE_CHECKING:
     import kvui
 
-CONNECTION_REFUSED_GAME_STATUS = "Dolphin failed to connect. Please load a ROM for Twilight Princess. Trying again in 5 seconds..."
+CONNECTION_REFUSED_GAME_STATUS = "Dolphin connected but wrong game found. Please load a ROM for Twilight Princess. Trying again in 5 seconds..."
 CONNECTION_REFUSED_SAVE_STATUS = "Dolphin failed to connect. Please load into the save file. Trying again in 5 seconds..."
 CONNECTION_LOST_STATUS = "Dolphin connection was lost. Please restart your emulator and make sure Twilight Princess is running."
 CONNECTION_CONNECTED_STATUS = "Dolphin connected successfully."
 CONNECTION_INITIAL_STATUS = "Dolphin connection has not been initiated."
+
+RANDO_NOT_LOADED_MSG = "Randomizer is not loaded, Client will not work until fixed"
 
 VALIDATION_TIME = 10
 
@@ -166,6 +168,7 @@ class TPCommandProcessor(ClientCommandProcessor):
 
         logger.info(f"Writing name {padded_name}")
         write_string(SLOT_NAME_ADDR, padded_name)
+        write_byte(SAVE_FILE_ADDR + 0x900, 0x1)
         return
 
     @mark_raw
@@ -224,7 +227,7 @@ class TPContext(CommonContext):
     This class manages all interactions with the Dolphin emulator and the Archipelago server for Twilight Princess.
     """
 
-    command_processor = TPCommandProcessor
+    command_processor: TPCommandProcessor = TPCommandProcessor
     game: str = "Twilight Princess"
     items_handling: int = 0b011
 
@@ -250,6 +253,7 @@ class TPContext(CommonContext):
         self.server_data_built = False
         self.server_data_sent = False
         self.validation_time_start = time.time()
+        self.check_in_game_msg_timer = time.time()
         # Event is used for pause as it better represents how I want to think about it
         self.validation_pause = asyncio.Event()
 
@@ -1304,24 +1308,33 @@ async def check_ingame(ctx: TPContext) -> bool:
 
     :return: `True` if the player is in-game, otherwise `False`.
     """
+    if read_byte(0x800042BC) != 0x00:
+        return True
+
+    in_game = False
     current_node = read_byte(CURR_NODE_ADDR)
     if current_node == ctx.current_node:
-        return current_node != 0xFF
+        in_game = current_node != 0xFF
 
     # If Node changed check for chnge to hyrule field
-    if current_node != 0x06:
+    elif current_node != 0x06:
         ctx.current_node = current_node
-        return current_node != 0xFF
+        in_game = current_node != 0xFF
 
-    await asyncio.sleep(3)
-    new_node = read_byte(CURR_NODE_ADDR)
-
-    if new_node == 0x06:
-        ctx.current_node = 0x06
-        return True
     else:
-        ctx.current_node = new_node
-        return new_node != 0xFF
+        await asyncio.sleep(3)
+        new_node = read_byte(CURR_NODE_ADDR)
+
+        if new_node == 0x06:
+            ctx.current_node = 0x06
+            in_game = True
+        else:
+            ctx.current_node = new_node
+            in_game = new_node != 0xFF
+
+    if in_game and (ctx.check_in_game_msg_timer + VALIDATION_TIME <= time.time()):
+        logger.warning(RANDO_NOT_LOADED_MSG)
+    return False
 
 
 def _check_status() -> bool:
@@ -1383,7 +1396,11 @@ async def dolphin_sync_task(ctx: TPContext) -> None:
                     await validate_items(ctx)
                 else:
                     if not ctx.auth:
-                        ctx.auth = read_string(SLOT_NAME_ADDR, 0x40)
+                        if read_byte(SAVE_FILE_ADDR + 0x900) == 0x1:
+                            ctx.auth = read_string(SLOT_NAME_ADDR, 0x40)
+                        else:
+                            await ctx.get_username()
+                            ctx.command_processor._cmd_name(ctx.auth)
                     if ctx.awaiting_dolphin:
                         await ctx.server_auth()
                 await asyncio.sleep(0.1)
