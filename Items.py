@@ -154,7 +154,7 @@ ITEM_TABLE: dict[str, TPItemData] = {
     "Progressive Fishing Rod": TPItemData("Item", IC.progression, 41, 2, 0x4A),
     "Slingshot": TPItemData("Item", IC.progression, 44, 1, 0x4B),
     "Bomb Bag": TPItemData("Item", IC.progression, 45, 3, 0x51),
-    "Progessive Bottle": TPItemData("Bottle", IC.progression, 46, 1, None),
+    "Progessive Bottle": TPItemData("Bottle", IC.progression, 46, 1, 0x9D),
     # Story Items fit here (useful if randomized eventually)
     # "Horse Call": TPItemData("Item", VERY_USEFUL, 53, 0, 0x84),
     "Forest Temple Small Key": TPItemData("Small key", IC.progression, 54, 4, 0x85),
