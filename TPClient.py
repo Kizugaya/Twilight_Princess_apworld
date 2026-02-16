@@ -900,18 +900,12 @@ def _validate_item(
 
 async def validate_items(ctx: TPContext) -> None:
 
-    # If paused or the timer has not passed then skip validation
-    if (ctx.validation_pause.is_set()) or (
-        ctx.validation_time_start + VALIDATION_TIME > time.time()
-    ):
-        # if DEBUGGING:
-        #     logger.info(
-        #         f"Debug: validation not ready {ctx.validation_pause.is_set()=} or {ctx.validation_timer=} < {(time.time() + VALIDATION_TIME)}"
-        #     )
+    # Wait for timer to expire
+    if ctx.validation_time_start + VALIDATION_TIME > time.time():
         return
 
-    # Only try to validate if in correct status
-    if not _check_status():
+    # Restart timer if not in correct state
+    if (ctx.validation_pause.is_set()) or (not _check_status()):
         ctx.validation_time_start = time.time()
         return
 
@@ -922,7 +916,11 @@ async def validate_items(ctx: TPContext) -> None:
     for i in range(0, 8):
         item_stack_addr = ITEM_WRITE_ADDR + i
         if read_byte(item_stack_addr) != 0x00:
+            ctx.validation_time_start = time.time()  # Reset timer to wait for empty
             return
+
+    # Now that validation is starting let's pause incase async stuff
+    ctx.validation_pause.set()
 
     for item_name in ITEM_TABLE:
 
@@ -932,7 +930,7 @@ async def validate_items(ctx: TPContext) -> None:
             item_count, int
         ), f"[Twilight Princess Client] {item_count=}, {item_name=}"
 
-        if item_count <= 0:
+        if item_count <= 0:  # -1 items are not insurable
             continue
 
         if DEBUGGING:
@@ -940,7 +938,7 @@ async def validate_items(ctx: TPContext) -> None:
                 f"Debug: validation found you are missing {item_count} x {item_name}"
             )
 
-        # Give Heart containers when possible to help things
+        # Give Heart containers when possible to help things (Note: Heart Containers are a -1 item)
         if item_name == "Piece of Heart" and item_count >= 5:
             full_hearts = math.floor(item_count / 5)
             remainder = item_count % 5
@@ -954,9 +952,6 @@ async def validate_items(ctx: TPContext) -> None:
                 ctx.insurance_queue.append(["Piece of Heart", remainder])
         else:
             ctx.insurance_queue.append([item_name, item_count])
-
-        # Validation completed so wait until starting again
-        ctx.validation_pause.set()
 
         item_give_list: list[str] = []
 
@@ -980,39 +975,6 @@ async def validate_items(ctx: TPContext) -> None:
 
     # Set the timer for validation to start again
     ctx.validation_time_start = time.time()
-
-
-def convert_heart_count(hearts: int) -> tuple[int, int]:
-
-    full_hearts = math.floor(hearts / 5)
-    remainder = hearts % 5
-
-    assert (
-        (full_hearts * 5) + remainder
-    ) == hearts, (
-        f"The math is bad try again {((full_hearts * 5) + remainder)=} {hearts=}"
-    )
-
-    return [full_hearts, remainder]
-
-
-def _get_heart_diff(ctx: TPContext) -> int:
-    """Returns the difference between expected and actual heart counts"""
-
-    actual_heart_pieace_count = read_short(SAVE_FILE_ADDR)
-    heart_piece_count = 0
-    heart_container_count = 0
-    for item in ctx.items_received:
-        if item.item == ITEM_TABLE["Piece of Heart"].code + ITEM_APID_BASE:
-            heart_piece_count += 1
-        if item.item == ITEM_TABLE["Heart Container"].code + ITEM_APID_BASE:
-            heart_container_count += 1
-
-    heart_difference = (
-        (heart_container_count * 5) + heart_piece_count + 15
-    ) - actual_heart_pieace_count
-
-    return heart_difference
 
 
 async def check_locations(ctx: TPContext) -> None:
