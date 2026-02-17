@@ -717,7 +717,9 @@ async def give_items(ctx: TPContext) -> None:
                 item_give_queue = []
 
         if len(item_give_queue) > 0:
-            assert len(item_give_queue) <= 8, f"[Twilight Princess Client]"
+            assert (
+                len(item_give_queue) <= 8
+            ), f"[Twilight Princess Client] This is an un expected error please report this"
             if DEBUGGING:
                 logger.info(f"Debug: Queued Items to give {item_give_queue}")
             while not await _give_items(ctx, item_give_queue):
