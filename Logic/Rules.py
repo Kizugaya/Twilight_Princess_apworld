@@ -2924,7 +2924,7 @@ def set_location_access_rules(world: "TPWorld"):
         lambda state: (
             state.has("Shadow Crystal", player)
             and (
-                state.has("Gerudo Desert Bublin Camp Key", player)
+                state.has("Gerudo Desert Bulblin Camp Key", player)
                 # Holdover from Keysy
                 # or (
                 #     state._tp_small_key_settings(player)
@@ -2937,7 +2937,7 @@ def set_location_access_rules(world: "TPWorld"):
             (
                 state.has("Shadow Crystal", player)
                 and (
-                    state.has("Gerudo Desert Bublin Camp Key", player)
+                    state.has("Gerudo Desert Bulblin Camp Key", player)
                     or (
                         (can_do_map_glitch(state, player) and has_sword(state, player))
                         # Holdover from Keysy

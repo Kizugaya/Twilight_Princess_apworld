@@ -412,7 +412,7 @@ KEY_TO_OFFSET = {
     "Palace of Twilight Small Key": 7,
     "Hyrule Castle Small Key": 8,
     "Gate Keys": 9,
-    "Gerudo Desert Bublin Camp Key": 10,
+    "Gerudo Desert Bulblin Camp Key": 10,
     "Forest Temple Big Key": 11,
     "Lakebed Temple Big Key": 12,
     "Goron Mines Key Shard": 13,

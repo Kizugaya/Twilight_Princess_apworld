@@ -8,6 +8,7 @@ from ..options import *
 if TYPE_CHECKING:
     from .. import TPWorld
 
+
 # All connections created are present in this file, even if the rule is always True.
 # This is to allow for easy change / lookup of connection rules
 def set_region_access_rules(world: "TPWorld", player: int):
@@ -3640,7 +3641,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
         lambda state: (
             (
                 (
-                    state.has("Gerudo Desert Bublin Camp Key", player)
+                    state.has("Gerudo Desert Bulblin Camp Key", player)
                     # Holdover from Keysy
                     # or (
                     #     state._tp_small_key_settings(player)
@@ -3655,7 +3656,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
             (
                 can_defeat_KingBulblinDesert(state, player)
                 and (
-                    state.has("Gerudo Desert Bublin Camp Key", player)
+                    state.has("Gerudo Desert Bulblin Camp Key", player)
                     or (
                         (can_do_map_glitch(state, player) and has_sword(state, player))
                         # Holdover from Keysy
