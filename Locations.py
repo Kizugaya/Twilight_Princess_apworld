@@ -84,7 +84,6 @@ class TPStages(Enum):
     Star_Game = "Star Game"
     Eldin_Field = "Eldin Field"
     Faron_Field = "Faron Field"
-    Bulblin_Camp = "Bulblin Camp"
     Lanayru_Field = "Lanayru Field"
     Unkown = "Unkown"
 

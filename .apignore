@@ -1,7 +1,7 @@
+tools/
+.git/
+
 /Docs/Notes.md
 /Docs/simple_setup.md
-# Testing Files
 /tests/logs.log
 fuzzmeta.yaml
-
-__pycache__
