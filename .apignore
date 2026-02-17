@@ -1,7 +1,6 @@
 tools/
 .git/
 
-/Docs/Notes.md
-/Docs/simple_setup.md
+/docs/Notes.md
 /tests/logs.log
 fuzzmeta.yaml
