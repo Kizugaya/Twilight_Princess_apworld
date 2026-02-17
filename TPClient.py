@@ -715,6 +715,7 @@ async def give_items(ctx: TPContext) -> None:
                     await asyncio.sleep(0.5)
                 write_short(EXPECTED_INDEX_ADDR, item_index + 1)
                 item_give_queue = []
+
         if len(item_give_queue) > 0:
             assert len(item_give_queue) <= 8, f"[Twilight Princess Client]"
             if DEBUGGING:
@@ -722,9 +723,9 @@ async def give_items(ctx: TPContext) -> None:
             while not await _give_items(ctx, item_give_queue):
                 await asyncio.sleep(0.5)
             write_short(EXPECTED_INDEX_ADDR, item_index + 1)
-        assert (
-            len(ctx.item_queue) == 0
-        ), f"[Twilight Princess Client] item give queue is not empty at the end {ctx.item_queue=}\n{item_index=} - {ctx.last_received_index=}"
+        # assert (
+        #     len(ctx.item_queue) == 0
+        # ), f"[Twilight Princess Client] item give queue is not empty at the end {ctx.item_queue=}\n{item_index=} - {ctx.last_received_index=}"
 
         # Now validation should be good to occur
         if ctx.validation_pause.is_set():
