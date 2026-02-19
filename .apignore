@@ -1,6 +1,1 @@
-tools/
-.git/
-
 /docs/Notes.md
-/tests/logs.log
-fuzzmeta.yaml
