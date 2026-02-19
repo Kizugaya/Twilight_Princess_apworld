@@ -297,6 +297,7 @@ class TPContext(CommonContext):
             self.insurance_queue = deque()
             self.validation_time_start = time.time()
             self.validation_pause.set()
+            self.locations_checked = set()
             if check_ingame(self):
                 self.last_received_index = read_short(EXPECTED_INDEX_ADDR)
             else:
