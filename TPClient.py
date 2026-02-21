@@ -156,20 +156,13 @@ class TPCommandProcessor(ClientCommandProcessor):
             logger.info("Client must be connected to dolphin first")
             return
 
-        if self.ctx.current_node == 0xFF:
-            logger.info("Must be in game to change name")
-            return
+        async def try_write_name():
+            if not await check_ingame(self.ctx):
+                logger.info("Must be in game to change name")
+            else:
+                write_name(name)
 
-        if len(name) > 16:
-            name = name[:16]
-
-        # Pad the name with 0x00 characters to make it 16 characters long
-        padded_name = name.ljust(16, "\x00")
-
-        logger.info(f"Writing name {padded_name}")
-        write_string(SLOT_NAME_ADDR, padded_name)
-        write_byte(SAVE_FILE_ADDR + 0x900, 0x1)
-        return
+        asyncio.create_task(try_write_name())
 
     @mark_raw
     def _cmd_validate(self, item_name: str = "") -> None:
@@ -244,7 +237,6 @@ class TPContext(CommonContext):
         self.insurance_queue: deque[tuple[str, int]] = deque()
         self.dolphin_sync_task: Optional[asyncio.Task[None]] = None
         self.dolphin_status = CONNECTION_INITIAL_STATUS
-        self.awaiting_dolphin = False
         self.last_received_index = -1
         self.has_send_death = False
         self.current_node = 0xFF
@@ -277,10 +269,12 @@ class TPContext(CommonContext):
         if password_requested and not self.password:
             await super().server_auth(password_requested)
         if not self.auth:
-            if self.awaiting_dolphin:
-                return
-            self.awaiting_dolphin = True
-            logger.info("Awaiting connection to Dolphin to get player information.")
+            if read_byte(SAVE_FILE_ADDR + 0x900) == 0x1:
+                self.auth = read_string(SLOT_NAME_ADDR, 0x40)
+            else:
+                await self.get_username()
+                write_name(self.auth)
+            await self.server_auth()
             return
         await self.send_connect()
 
@@ -495,6 +489,20 @@ def write_string(console_address: int, string: str) -> None:
     dolphin_memory_engine.write_bytes(
         console_address, string.encode(STRING_ENCODING) + b"\0"
     )
+
+
+def write_name(name: str):
+    assert isinstance(name, str)
+
+    if len(name) > 16:
+        name = name[:16]
+
+    # Pad the name with 0x00 characters to make it 16 characters long
+    padded_name = name.ljust(16, "\x00")
+
+    logger.info(f"Writing name {padded_name}")
+    write_string(SLOT_NAME_ADDR, padded_name)
+    write_byte(SAVE_FILE_ADDR + 0x900, 0x1)
 
 
 # def check_key_counts()
@@ -1306,10 +1314,15 @@ async def check_ingame(ctx: TPContext) -> bool:
 
     :return: `True` if the player is in-game, otherwise `False`.
     """
-    if read_byte(0x800042BC) != 0x00:
-        return True
-
     in_game = False
+    valid = False
+
+    if read_byte(0x800042BC) != 0x00:
+        in_game = True
+        valid = True
+
+    # We still need to update the current node so it stops thinking we are in the menu before connecting
+
     current_node = read_byte(CURR_NODE_ADDR)
     if current_node == ctx.current_node:
         in_game = current_node != 0xFF
@@ -1330,9 +1343,14 @@ async def check_ingame(ctx: TPContext) -> bool:
             ctx.current_node = new_node
             in_game = new_node != 0xFF
 
-    if in_game and (ctx.check_in_game_msg_timer + VALIDATION_TIME <= time.time()):
+    if (
+        in_game
+        and not valid
+        and (ctx.check_in_game_msg_timer + VALIDATION_TIME <= time.time())
+    ):
         logger.warning(RANDO_NOT_LOADED_MSG)
-    return False
+        ctx.check_in_game_msg_timer = time.time()
+    return in_game
 
 
 def _check_status() -> bool:
@@ -1392,15 +1410,7 @@ async def dolphin_sync_task(ctx: TPContext) -> None:
                     await give_items(ctx)
                     await check_locations(ctx)
                     await validate_items(ctx)
-                else:
-                    if not ctx.auth:
-                        if read_byte(SAVE_FILE_ADDR + 0x900) == 0x1:
-                            ctx.auth = read_string(SLOT_NAME_ADDR, 0x40)
-                        else:
-                            await ctx.get_username()
-                            ctx.command_processor._cmd_name(ctx.auth)
-                    if ctx.awaiting_dolphin:
-                        await ctx.server_auth()
+
                 await asyncio.sleep(0.1)
             else:
                 if ctx.dolphin_status == CONNECTION_CONNECTED_STATUS:
