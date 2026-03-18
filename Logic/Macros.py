@@ -1712,14 +1712,14 @@ def has_sword_or_BS(state: CollectionState, player: int):
 
 
 def has_bottle(state: CollectionState, player: int):
-    return (state.has("Progessive Bottle", player)) and state.has(
+    return (state.has("Progressive Bottle", player)) and state.has(
         "Lantern", player
     )  # NOTE: Require lantern to get rid of oil
 
 
 def has_bottles(state: CollectionState, player: int):
     if state.has("Lantern", player):
-        return state.has("Progessive Bottle", player, 2)
+        return state.has("Progressive Bottle", player, 2)
     return False
 
 

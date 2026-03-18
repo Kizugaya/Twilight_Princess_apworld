@@ -322,7 +322,7 @@ def check_item_count(item_name: str, save_file_addr: int) -> int:
                 return 1
             return 0
 
-        case "Progessive Bottle":
+        case "Progressive Bottle":
             if dolphin_memory_engine.read_byte(save_file_addr + 0xAA) != 255:
                 return 4
             elif dolphin_memory_engine.read_byte(save_file_addr + 0xA9) != 255:
