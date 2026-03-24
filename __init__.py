@@ -1367,6 +1367,7 @@ class TPWorld(World):
         item_str, debug_str = get_item_placements(self.multiworld, self.player)
 
         setting_string = get_setting_string(self.multiworld, self.player)
+        seed_id = "Test"
         # Output seed name and slot number to seed RNG in randomizer client.
         output_data = {
             "SettingsString": setting_string,
@@ -1417,7 +1418,7 @@ class TPWorld(World):
             output_directory, f"{multiworld.get_out_file_name_base(player)}.aptp"
         )
         with open(file_path, "w") as f:
-            f.write(f"{setting_string},{item_str}")
+            f.write(f"{setting_string},{item_str},{self.player_name},{"Test"}")
 
         puml_path = file_path = os.path.join(
             output_directory, f"{multiworld.get_out_file_name_base(player)}.puml"
