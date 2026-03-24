@@ -424,4 +424,5 @@ KEY_TO_OFFSET = {
     "Hyrule Castle Big Key": 19,
     "Ordon Pumpkin": 20,
     "Ordon Goat Cheese": 21,
+    "Progressive Sky Book": 22,
 }

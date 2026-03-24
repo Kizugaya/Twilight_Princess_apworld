@@ -358,8 +358,8 @@ class TPContext(CommonContext):
                         self.item_queue.append((item, self.last_received_index))
                     # Add local keys to the validation count
                     elif LOOKUP_ID_TO_NAME[item.item] in KEY_TO_OFFSET.keys():
-                        if DEBUGGING:
-                            logger.info(f"Debug: Found Key locally so adding to count")
+                        # if DEBUGGING:
+                        #     logger.info(f"Debug: Found Key locally so adding to count")
                         key_offset = (
                             SAVE_FILE_ADDR
                             + 0x901
@@ -594,10 +594,10 @@ async def _give_items(ctx: TPContext, items: list[str]) -> bool:
 
         write_byte(item_stack_addr, ITEM_TABLE[items[i]].item_id)
 
-        if item in KEY_TO_OFFSET.keys():
-            key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item]
-            key_count = read_byte(key_offset)
-            write_byte(key_offset, key_count + 1)
+        # if item in KEY_TO_OFFSET.keys():
+        #     key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item]
+        #     key_count = read_byte(key_offset)
+        #     write_byte(key_offset, key_count + 1)
 
     # Now the queue is full and all items are added
 
@@ -639,24 +639,17 @@ async def give_items(ctx: TPContext) -> None:
                 "Rupee",
                 "Ammo",
                 "Trap",
-                "Book",
             ]:
                 item_give_queue.append(item_name)
 
             # Items that we need to check the count of before giving to link
             elif item_data.type in [
-                "Small key",  # TODO: Insure Keys
-                "Big Key",
                 "Item",
                 "Bottle",
                 "Bug",
                 "Poe",
             ]:
-                # TODO: Remove when bringing back on give
-                if item_name in KEY_TO_OFFSET.keys():
-                    key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item_name]
-                    key_count = read_byte(key_offset)
-                    write_byte(key_offset, key_count + 1)
+
                 # actual_item_count = check_item_count(item_name, SAVE_FILE_ADDR)
 
                 # expected_item_count = 0
@@ -695,8 +688,18 @@ async def give_items(ctx: TPContext) -> None:
                         )
             elif item_data.type in [
                 "Heart",
+                "Book",
+                "Small key",
+                "Big Key",
             ]:
                 continue
+
+                # Don't use this just holding here to remember how
+                # if item_name in KEY_TO_OFFSET.keys():
+                #     key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item_name]
+                #     key_count = read_byte(key_offset)
+                #     write_byte(key_offset, key_count + 1)
+
                 actual_heart_pieace_count = read_short(SAVE_FILE_ADDR)
                 heart_container_count = sum(
                     [
@@ -842,13 +845,13 @@ def _validate_item(
         "Ammo",
         "Trap",
         "Event",
-        "Book",
     ]:
         # Skip all non insurable items
         return -1
 
     elif item_data.type in [
-        "Small key",  # TODO: Insure Keys
+        "Book",
+        "Small key",
         "Big Key",
         "Item",
         "Bottle",
@@ -975,6 +978,11 @@ async def validate_items(ctx: TPContext) -> None:
             ctx.insurance_queue.append(["Heart Container", full_hearts])
             if remainder > 0:
                 ctx.insurance_queue.append(["Piece of Heart", remainder])
+        elif item_name in KEY_TO_OFFSET.keys():
+            key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item_name]
+            key_count = read_byte(key_offset)
+            write_byte(key_offset, key_count + item_count)
+            ctx.insurance_queue.append([item_name, item_count])
         else:
             ctx.insurance_queue.append([item_name, item_count])
 
