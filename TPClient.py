@@ -94,7 +94,7 @@ def set_address(
         item_write_addr if item_write_addr is not None else saveFileAddr + 0x8F0
     )
     EXPECTED_INDEX_ADDR = (
-        expected_index_addr if expected_index_addr is not None else saveFileAddr + 0x900
+        expected_index_addr if expected_index_addr is not None else saveFileAddr + 0x8FC
     )
     NODES_START_ADDR = (
         nodes_start_addr if nodes_start_addr is not None else saveFileAddr + 0x1F0
@@ -195,6 +195,16 @@ class TPCommandProcessor(ClientCommandProcessor):
             VALIDATION_TIME = num
         except ValueError:
             logger.info("Invalid input: cannot convert to integer")
+
+    @mark_raw
+    def _cmd_validation_pause(self) -> None:
+        """Toggle Validation on and off"""
+        if self.ctx.validation_pause.is_set():
+            logger.info("Pausing validation")
+            self.ctx.validation_pause.set()
+        else:
+            logger.info("Resuming Validation")
+            self.ctx.validation_pause.clear()
 
     @mark_raw
     def _cmd_give(self, item: str) -> None:
@@ -326,6 +336,7 @@ class TPContext(CommonContext):
             if args["index"] >= self.last_received_index:
                 # TODO: add handling for a 0 index to reset the items Recieved
                 self.last_received_index = args["index"]
+                self.validation_pause.set()
                 for item in args["items"]:
                     assert isinstance(
                         item, NetworkItem
@@ -356,7 +367,6 @@ class TPContext(CommonContext):
                         )
                         key_count = read_byte(key_offset)
                         write_byte(key_offset, key_count + 1)
-                    self.validation_pause.set()
 
     def on_deathlink(self, data: dict[str, Any]) -> None:
         """
@@ -391,6 +401,7 @@ def read_byte(console_address: int) -> int:
     assert isinstance(console_address, int)
     result = dolphin_memory_engine.read_byte(console_address)
     assert isinstance(result, int)
+    result = result % 256
     return result
 
 
@@ -402,9 +413,8 @@ def read_short(console_address: int) -> int:
     :return: The value read from memory.
     """
     assert isinstance(console_address, int)
-    result = int.from_bytes(
-        dolphin_memory_engine.read_bytes(console_address, 2), byteorder="big"
-    )
+    read_bytes = dolphin_memory_engine.read_bytes(console_address, 2)
+    result = int.from_bytes(read_bytes)
     assert isinstance(result, int)
     return result
 
@@ -642,6 +652,11 @@ async def give_items(ctx: TPContext) -> None:
                 "Bug",
                 "Poe",
             ]:
+                # TODO: Remove when bringing back on give
+                if item_name in KEY_TO_OFFSET.keys():
+                    key_offset = SAVE_FILE_ADDR + 0x901 + KEY_TO_OFFSET[item_name]
+                    key_count = read_byte(key_offset)
+                    write_byte(key_offset, key_count + 1)
                 # actual_item_count = check_item_count(item_name, SAVE_FILE_ADDR)
 
                 # expected_item_count = 0
@@ -740,8 +755,8 @@ async def give_items(ctx: TPContext) -> None:
 
         # Now validation should be good to occur
         if ctx.validation_pause.is_set():
-            if DEBUGGING:
-                logger.info("Debug: Clearing validation Paused")
+            # if DEBUGGING:
+            #     logger.info("Debug: Clearing validation Paused")
             ctx.validation_pause.clear()
 
         return
