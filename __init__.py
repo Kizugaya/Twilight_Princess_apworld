@@ -1,14 +1,19 @@
+from base64 import b64encode
 from collections.abc import Mapping
 from copy import deepcopy
 import json
 import os
 from typing import Any, ClassVar, Optional
+import zipfile
+
+import yaml
 
 from Fill import fill_restrictive
 from BaseClasses import CollectionState, Item, LocationProgressType
 from BaseClasses import ItemClassification as IC
 from BaseClasses import Tutorial
 from Utils import visualize_regions
+from worlds.Files import APPatch, APPlayerContainer
 from .ClientUtils import VERSION
 from .Items import (
     ITEM_TABLE,
@@ -74,6 +79,31 @@ components.append(
         file_identifier=SuffixIdentifier(".aptp"),
     )
 )
+
+
+class TPPlayerContainer(APPlayerContainer):
+    """
+    Defines the container file for Twilight Princess
+    """
+
+    game = "Twilight Princess"
+    compression_method = zipfile.ZIP_DEFLATED
+    patch_file_ending = ".aptp"
+
+    def __init__(
+        self,
+        seed_string: str,
+        patch_path: str,
+        player_name: str,
+        player: int,
+        server: str = "",
+    ):
+        self.output_data = seed_string
+        super().__init__(patch_path, player, player_name, server)
+
+    def write_contents(self, opened_zipfile: zipfile.ZipFile) -> None:
+        opened_zipfile.writestr("settings.txt", self.output_data)
+        super().write_contents(opened_zipfile)
 
 
 class TPWeb(WebWorld):
@@ -1434,24 +1464,31 @@ class TPWorld(World):
         #                 location.name  # I hate that this isn't type hinting
         #             ] = location.item.item_id
 
-        def custom_serializer(obj):
-            if hasattr(obj, "__dict__"):
-                return obj.__dict__
-            return str(obj)
+        # def custom_serializer(obj):
+        #     if hasattr(obj, "__dict__"):
+        #         return obj.__dict__
+        #     return str(obj)
 
-        # Output the details to debug file.
-        debug_file_path = os.path.join(
-            output_directory, f"debug_{multiworld.get_out_file_name_base(player)}.aptp"
-        )
-        with open(debug_file_path, "w") as f:
-            f.write(json.dumps(output_data, indent=4, default=custom_serializer))
+        # # Output the details to debug file.
+        # debug_file_path = os.path.join(
+        #     output_directory, f"debug_{multiworld.get_out_file_name_base(player)}.aptp"
+        # )
+        # with open(debug_file_path, "w") as f:
+        #     f.write(json.dumps(output_data, indent=4, default=custom_serializer))
 
         # Output the settings and item_placement to file.
         file_path = os.path.join(
-            output_directory, f"{multiworld.get_out_file_name_base(player)}.aptp"
+            output_directory,
+            f"{multiworld.get_out_file_name_base(player)}",
         )
-        with open(file_path, "w") as f:
-            f.write(f"{setting_string},{item_str},{self.player_name},{"Test"}")
+        seed_string = f"{setting_string},{item_str},{self.player_name},{seed_id}"
+        with open(f"{file_path}.txt", "w") as f:
+            f.write(seed_string)
+
+        aptp = TPPlayerContainer(
+            seed_string, f"{file_path}.aptp", self.player_name, self.player
+        )
+        aptp.write()
 
         puml_path = file_path = os.path.join(
             output_directory, f"{multiworld.get_out_file_name_base(player)}.puml"
