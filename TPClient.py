@@ -14,6 +14,7 @@ from .ClientItemChecker import check_dungeon_item_count, check_item_count  # typ
 from .ClientUtils import *
 from .Items import ITEM_TABLE, LOOKUP_ID_TO_NAME, TPItem, item_factory
 from .Locations import LOCATION_TABLE, TPLocation, TPLocationType
+from .Randomizer.SettingsDecoder import run_decoder
 import Utils
 from CommonClient import (
     ClientCommandProcessor,
@@ -23,6 +24,17 @@ from CommonClient import (
     gui_enabled,
     get_base_parser,
 )
+
+# Source - https://stackoverflow.com/a/14119223
+# Posted by tomvodi, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-03-25, License - CC BY-SA 4.0
+
+import tkinter as tk
+from tkinter import filedialog
+
+root = tk.Tk()
+root.withdraw()
+
 
 from NetUtils import NetworkItem, ClientStatus
 
@@ -221,6 +233,19 @@ class TPCommandProcessor(ClientCommandProcessor):
             asyncio.create_task(try_give())
         except AssertionError:
             logger.info("Invalid item please use exact item name")
+
+    def _cmd_seed_validate(self):
+        """"""
+        try:
+
+            file_path = filedialog.askopenfilename()
+            assert file_path.endswith(".aptp")
+            with open(file_path) as f:
+                string = f.read()
+                run_decoder(string, file_path)
+
+        except Exception as e:
+            logger.info(e)
 
 
 class TPContext(CommonContext):
