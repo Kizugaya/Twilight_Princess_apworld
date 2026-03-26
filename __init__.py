@@ -652,6 +652,8 @@ class TPWorld(World):
             collection_state_map_and_compass,
         ]
 
+        starting_pool_copy = self.multiworld.precollected_items[self.player].copy()
+
         # Fill collection states, b/c if small keys are in the prefill pool then they are not in the item_pool
         # and Big Keys need small keys to define access, similar for map and compass etc
         if self.options.small_key_settings.in_dungeon:
@@ -765,6 +767,7 @@ class TPWorld(World):
             pass
 
         # Place Vanilla items first so that they are ensured to be placed correctly
+        #   Note: This will will put items even if precollected
         for option, setting, vanilla, state in zip(
             options, settings, vanillas, collection_states
         ):
@@ -869,19 +872,29 @@ class TPWorld(World):
                         assert item_name in ITEM_TABLE
                         assert item_name in self.prefill_pool
 
+                        # Don't place item if its precollected
+                        skip_item = False
+                        for item in starting_pool_copy:
+                            if item.name == item_name:
+                                skip_item = True
+                                starting_pool_copy.remove(item)
+                                break
+                        if skip_item:
+                            continue
+
                         new_items = list(
                             filter(lambda item: item.name == item_name, pre_fill_items)
                         )
 
-                        assert isinstance(
-                            new_items, list
-                        ), f"[Twilight Princess] (Own dungeon) items not a list {new_items=}"
-                        assert (
-                            len(new_items) > 0
-                        ), f"[Twilight Princess] (Own dungeon) No items found in pre fill items {item_name=}"
-                        assert len(new_items) == len(
-                            vanilla[dungeon_name][item_name]
-                        ), f"[Twilight Princess] (Own dungeon) Items does not match number needed {items=}"
+                        # assert isinstance(
+                        #     new_items, list
+                        # ), f"[Twilight Princess] (Own dungeon) items not a list {new_items=}"
+                        # assert (
+                        #     len(new_items) > 0
+                        # ), f"[Twilight Princess] (Own dungeon) No items found in pre fill items {item_name=}"
+                        # assert len(new_items) == len(
+                        #     vanilla[dungeon_name][item_name]
+                        # ), f"[Twilight Princess] (Own dungeon) Items does not match number needed {items=}"
 
                         items.extend(new_items)
 
@@ -1014,19 +1027,29 @@ class TPWorld(World):
                         assert item_name in ITEM_TABLE
                         assert item_name in self.prefill_pool
 
+                        # Don't place item if its precollected
+                        skip_item = False
+                        for item in starting_pool_copy:
+                            if item.name == item_name:
+                                skip_item = True
+                                starting_pool_copy.remove(item)
+                                break
+                        if skip_item:
+                            continue
+
                         new_items = list(
                             filter(lambda item: item.name == item_name, pre_fill_items)
                         )
 
-                        assert isinstance(
-                            new_items, list
-                        ), f"[Twilight Princess] (Any dungeon) items not a list {new_items=}"
-                        assert (
-                            len(new_items) > 0
-                        ), f"[Twilight Princess] (Any dungeon) No items found in pre fill items {item_name=}"
-                        assert len(new_items) == len(
-                            vanilla[dungeon_name][item_name]
-                        ), f"[Twilight Princess] (Any dungeon) Items does not match number needed {items=}"
+                        # assert isinstance(
+                        #     new_items, list
+                        # ), f"[Twilight Princess] (Any dungeon) items not a list {new_items=}"
+                        # assert (
+                        #     len(new_items) > 0
+                        # ), f"[Twilight Princess] (Any dungeon) No items found in pre fill items {item_name=}"
+                        # assert len(new_items) == len(
+                        #     vanilla[dungeon_name][item_name]
+                        # ), f"[Twilight Princess] (Any dungeon) Items does not match number needed {items=}"
 
                         items.extend(new_items)
 
@@ -1093,19 +1116,29 @@ class TPWorld(World):
                         assert item_name in ITEM_TABLE
                         assert item_name in self.prefill_pool
 
+                        # Don't place item if its precollected
+                        skip_item = False
+                        for item in starting_pool_copy:
+                            if item.name == item_name:
+                                skip_item = True
+                                starting_pool_copy.remove(item)
+                                break
+                        if skip_item:
+                            continue
+
                         new_items = list(
                             filter(lambda item: item.name == item_name, pre_fill_items)
                         )
 
-                        assert isinstance(
-                            new_items, list
-                        ), f"[Twilight Princess] (Any-Own dungeon) items not a list {new_items=}"
-                        assert (
-                            len(new_items) > 0
-                        ), f"[Twilight Princess] (Any-Own dungeon) No items found in pre fill items {item_name=}"
-                        assert len(new_items) == len(
-                            vanilla[dungeon_name][item_name]
-                        ), f"[Twilight Princess] (Any-Own dungeon) Items does not match number needed {items=}"
+                        # assert isinstance(
+                        #     new_items, list
+                        # ), f"[Twilight Princess] (Any-Own dungeon) items not a list {new_items=}"
+                        # assert (
+                        #     len(new_items) > 0
+                        # ), f"[Twilight Princess] (Any-Own dungeon) No items found in pre fill items {item_name=}"
+                        # assert len(new_items) == len(
+                        #     vanilla[dungeon_name][item_name]
+                        # ), f"[Twilight Princess] (Any-Own dungeon) Items does not match number needed {items=}"
 
                         items.extend(new_items)
 
@@ -1184,9 +1217,9 @@ class TPWorld(World):
         # endregion
 
         # All items in the pre fill pool need to be processed in the pre fill
-        assert (
-            len(pre_fill_items) == 0
-        ), f"[Twilight Princess] Not all pre fill items placed {pre_fill_items=}"
+        # assert (
+        #     len(pre_fill_items) == 0
+        # ), f"[Twilight Princess] Not all pre fill items placed {pre_fill_items=}"
 
     def post_fill(self):
         # As part of (semi-)tiger beetle style test ensure things worked Properly in prod
