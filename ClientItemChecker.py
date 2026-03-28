@@ -327,7 +327,7 @@ def check_item_count(item_name: str, save_file_addr: int) -> int:
                 return 4
             elif dolphin_memory_engine.read_byte(save_file_addr + 0xA9) != 255:
                 return 3
-            elif dolphin_memory_engine.read_byte(save_file_addr + 0xA9) != 255:
+            elif dolphin_memory_engine.read_byte(save_file_addr + 0xA8) != 255:
                 return 2
             elif dolphin_memory_engine.read_byte(save_file_addr + 0xA7) != 255:
                 return 1
