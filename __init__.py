@@ -230,6 +230,12 @@ class TPWorld(World):
         """
         Setup things ready for generation.
         """
+
+        if len(self.player_name) > 16:
+            raise OptionError(
+                "[Twilight Princess] Player name must be 16 character or less"
+            )
+
         # If overworld is not shuffled then override for vanilla placements if in overworld (locations already excluded but prefill needs note)
         if self.options.overworld_shuffled.value == OverWoldShuffled.option_false:
             raise OptionError(
