@@ -91,7 +91,9 @@ def set_address(
             saveFileAddr = 0x80400300
             STRING_ENCODING = "shift-jis"
 
-    global CURR_HEALTH_ADDR, CURR_NODE_ADDR, SLOT_NAME_ADDR, ITEM_WRITE_ADDR, EXPECTED_INDEX_ADDR, NODES_START_ADDR, ACTIVE_NODE_ADDR, SAVE_FILE_ADDR, LINK_POINTER_ADDR, M_EVENT_STATUS_ADDR
+    global CURR_HEALTH_ADDR, CURR_NODE_ADDR, SLOT_NAME_ADDR, ITEM_WRITE_ADDR, EXPECTED_INDEX_ADDR, NODES_START_ADDR, ACTIVE_NODE_ADDR, SAVE_FILE_ADDR, LINK_POINTER_ADDR, M_EVENT_STATUS_ADDR, REGION_CODE
+
+    REGION_CODE = regionCode
 
     CURR_HEALTH_ADDR = (
         curr_health_addr if curr_health_addr is not None else saveFileAddr + 0x2
@@ -1210,7 +1212,10 @@ async def check_locations(ctx: TPContext) -> None:
                 server_copy_value, int
             ), f"{server_copy_key=}, {server_copy_value=}"
 
-            current_room = read_byte(SAVE_FILE_ADDR + 0x27220)
+            room_address = SAVE_FILE_ADDR + 0x27220
+            if REGION_CODE == "P":
+                room_address += 0x20
+            current_room = read_byte(room_address)
 
             assert isinstance(current_room, int), f"{current_room=}"
 
@@ -1266,7 +1271,10 @@ async def check_locations(ctx: TPContext) -> None:
                 server_copy_value, int
             ), f"{server_copy_key=}, {server_copy_value=}"
 
-            result = read_byte(SAVE_FILE_ADDR + 0x4AC98)
+            result = SAVE_FILE_ADDR + 0x4AC98
+            if REGION_CODE == "P":
+                result += 0x20
+            current_room = read_byte(result)
 
             assert isinstance(result, int), f"{result=}"
 
