@@ -3075,7 +3075,7 @@ LOCATION_TABLE = {
         bit=0x20,
     ),
     "Gerudo Desert Rock Grotto First Poe": TPLocationData(
-        code=324,
+        code=326,
         flags=TPFlag.Overworld | TPFlag.Poe,
         stage_id=TPStages.Gerudo_Desert,
         type=TPLocationType.Region,
@@ -3093,7 +3093,7 @@ LOCATION_TABLE = {
         bit=0x40,
     ),
     "Gerudo Desert Rock Grotto Second Poe": TPLocationData(
-        code=326,
+        code=324,
         flags=TPFlag.Overworld | TPFlag.Poe,
         stage_id=TPStages.Gerudo_Desert,
         type=TPLocationType.Region,
@@ -3705,7 +3705,7 @@ LOCATION_TABLE = {
         bit=0x4,
     ),
     "Lake Lantern Cave Eleventh Chest": TPLocationData(
-        code=394,
+        code=410,
         flags=TPFlag.Overworld,
         stage_id=TPStages.Lake_Hylia_Long_Cave,
         type=TPLocationType.Region,
@@ -3849,7 +3849,7 @@ LOCATION_TABLE = {
         bit=0x10,
     ),
     "Lake Lantern Cave Twelfth Chest": TPLocationData(
-        code=410,
+        code=394,
         flags=TPFlag.Overworld,
         stage_id=TPStages.Lake_Hylia_Long_Cave,
         type=TPLocationType.Region,
