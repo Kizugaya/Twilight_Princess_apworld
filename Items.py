@@ -142,7 +142,7 @@ ITEM_TABLE: dict[str, TPItemData] = {
     "Zora Armor": TPItemData("Item", IC.progression, 29, 1, 0x31),
     "Shadow Crystal": TPItemData("Item", VERY_USEFUL, 30, 1, 0x32),
     "Progressive Wallet": TPItemData("Item", IC.progression, 31, 2, 0x36),
-    "Hawkeye": TPItemData("Item", IC.progression, 32, 1, 0x3E),
+    "Hawkeye": TPItemData("Item", IC.useful, 32, 1, 0x3E),
     "Gale Boomerang": TPItemData("Item", VERY_USEFUL, 33, 1, 0x40),
     "Spinner": TPItemData("Item", VERY_USEFUL, 34, 1, 0x41),
     "Ball and Chain": TPItemData("Item", VERY_USEFUL, 35, 1, 0x42),
