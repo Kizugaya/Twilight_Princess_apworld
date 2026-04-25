@@ -155,8 +155,6 @@ class TPWorld(World):
 
     item_name_groups: ClassVar[dict[str, set[str]]] = item_name_groups
 
-    required_client_version: tuple[int, int, int] = (0, 5, 0)
-
     web: ClassVar[TPWeb] = TPWeb()
 
     origin_region_name: str = "Menu"
