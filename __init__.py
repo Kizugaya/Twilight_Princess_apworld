@@ -206,13 +206,7 @@ class TPWorld(World):
 
         for location, data in LOCATION_TABLE.items():
             if data.flags & enabled_flags == data.flags:
-                if (
-                    location == "Bulblin Guard Key"
-                    and options.skip_arbiters_grounds_entrance
-                ):
-                    nonprogress_locations.add(location)
-                else:
-                    progress_locations.add(location)
+                progress_locations.add(location)
             else:
                 nonprogress_locations.add(location)
 
