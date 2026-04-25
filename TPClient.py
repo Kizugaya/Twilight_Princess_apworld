@@ -1213,7 +1213,7 @@ async def check_locations(ctx: TPContext) -> None:
             ), f"{server_copy_key=}, {server_copy_value=}"
 
             room_address = SAVE_FILE_ADDR + 0x27220
-            if REGION_CODE == "P":
+            if REGION_CODE == 0x50:
                 room_address += 0x20
             current_room = read_byte(room_address)
 
@@ -1272,7 +1272,7 @@ async def check_locations(ctx: TPContext) -> None:
             ), f"{server_copy_key=}, {server_copy_value=}"
 
             result = SAVE_FILE_ADDR + 0x4AC98
-            if REGION_CODE == "P":
+            if REGION_CODE == 0x50:
                 result += 0x20
             current_room = read_byte(result)
 
