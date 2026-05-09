@@ -14,6 +14,7 @@ from BaseClasses import ItemClassification as IC
 from BaseClasses import Tutorial
 from Utils import visualize_regions
 from worlds.Files import APPatch, APPlayerContainer
+from .Randomizer.SeedId import gen_seed_id
 from .ClientUtils import VERSION
 from .Items import (
     ITEM_TABLE,
@@ -162,6 +163,7 @@ class TPWorld(World):
     player: int
 
     progression_pool: list[str]
+    seedID = ""
 
     def __init__(self, *args, **kwargs):
         super(TPWorld, self).__init__(*args, **kwargs)
@@ -1428,7 +1430,7 @@ class TPWorld(World):
         item_str, debug_str = get_item_placements(self.multiworld, self.player)
 
         setting_string = get_setting_string(self.multiworld, self.player)
-        seed_id = "Test"
+        self.seed_id = gen_seed_id(self.multiworld)
         # Output seed name and slot number to seed RNG in randomizer client.
         output_data = {
             "SettingsString": setting_string,
@@ -1479,7 +1481,7 @@ class TPWorld(World):
             output_directory,
             f"{multiworld.get_out_file_name_base(player)}",
         )
-        seed_string = f"{setting_string},{item_str},{self.player_name},{seed_id}"
+        seed_string = f"{setting_string},{item_str},{self.player_name},{self.seed_id}"
         with open(f"{file_path}.txt", "w") as f:
             f.write(seed_string)
 
@@ -1705,6 +1707,7 @@ class TPWorld(World):
             "DeathLink": self.options.death_link.value,
             "Settings": self.get_settings_map(),
             "LocationClassification": {},
+            "SeedID": self.seed_id,
         }
 
         for location in self.get_locations():

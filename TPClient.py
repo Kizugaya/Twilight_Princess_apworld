@@ -50,6 +50,10 @@ CONNECTION_CONNECTED_STATUS = "Dolphin connected successfully."
 CONNECTION_INITIAL_STATUS = "Dolphin connection has not been initiated."
 
 RANDO_NOT_LOADED_MSG = "Randomizer is not loaded, Client will not work until fixed"
+WRONG_SEED_LOADED_MSG = "Invalid Seed; The wrong seed was loaded when connecting, please load the seed named: "
+CONNECT_IN_GAME_MSG = (
+    "Please load a save file and gain control of link before attempting to connect"
+)
 
 VALIDATION_TIME = 10
 
@@ -283,6 +287,7 @@ class TPContext(CommonContext):
         self.server_data_sent = False
         self.validation_time_start = time.time()
         self.check_in_game_msg_timer = time.time()
+        self.SeedID = ""
         # Event is used for pause as it better represents how I want to think about it
         self.validation_pause = asyncio.Event()
 
@@ -303,6 +308,10 @@ class TPContext(CommonContext):
         """
         assert isinstance(password_requested, bool)
 
+        if not await check_ingame(self):
+            logger.info(CONNECT_IN_GAME_MSG)
+            return
+
         if password_requested and not self.password:
             await super().server_auth(password_requested)
         if not self.auth:
@@ -322,6 +331,7 @@ class TPContext(CommonContext):
         :param cmd: The command received from the server.
         :param args: The command arguments.
         """
+
         if cmd == "Connected":
             self.items_received = []
             self.item_queue = deque()
@@ -333,6 +343,16 @@ class TPContext(CommonContext):
                 self.last_received_index = read_short(EXPECTED_INDEX_ADDR)
             else:
                 self.last_received_index = -1
+
+            if args["slot_data"] is not None and "SeedID" in args["slot_data"]:
+                assert isinstance(
+                    args["slot_data"]["SeedID"], str
+                ), f"{args["slot_data"]["SeedID"]=}"
+                self.SeedID = args["slot_data"]["SeedID"]
+                read_seedID = read_string(read_pointer(0x800042BC) + 0x70, 16)
+                if self.SeedID != read_seedID:
+
+                    raise Exception(WRONG_SEED_LOADED_MSG + self.SeedID)
 
             if args["slot_data"] is not None and "DeathLink" in args["slot_data"]:
                 assert isinstance(
@@ -416,6 +436,9 @@ class TPContext(CommonContext):
         ui = super().make_gui()
         ui.base_title = "Archipelago Twilight Princess Client"
         return ui
+
+    def event_invalid_slot(self):
+        raise Exception("Invalid Slot; Make sure that the right seed is loaded")
 
 
 def read_byte(console_address: int) -> int:
@@ -1371,11 +1394,11 @@ async def check_ingame(ctx: TPContext) -> bool:
     :return: `True` if the player is in-game, otherwise `False`.
     """
     in_game = False
-    valid = False
+    seed_loaded = False
+    seed_ptr = read_pointer(0x800042BC)
 
-    if read_byte(0x800042BC) != 0x00:
-        in_game = True
-        valid = True
+    if seed_ptr != 0x00:
+        seed_loaded = True
 
     # We still need to update the current node so it stops thinking we are in the menu before connecting
 
@@ -1399,14 +1422,17 @@ async def check_ingame(ctx: TPContext) -> bool:
             ctx.current_node = new_node
             in_game = new_node != 0xFF
 
-    if (
-        in_game
-        and not valid
-        and (ctx.check_in_game_msg_timer + VALIDATION_TIME <= time.time())
-    ):
+    if not in_game and (ctx.check_in_game_msg_timer + VALIDATION_TIME <= time.time()):
         logger.warning(RANDO_NOT_LOADED_MSG)
         ctx.check_in_game_msg_timer = time.time()
-    return in_game
+    elif (
+        (not seed_loaded)
+        and in_game
+        and (ctx.check_in_game_msg_timer + VALIDATION_TIME <= time.time())
+    ):
+        logger.warning(WRONG_SEED_LOADED_MSG + ctx.SeedID)
+        ctx.check_in_game_msg_timer = time.time()
+    return seed_loaded
 
 
 def _check_status() -> bool:
