@@ -14,7 +14,6 @@ from BaseClasses import ItemClassification as IC
 from BaseClasses import Tutorial
 from Utils import visualize_regions
 from worlds.Files import APPatch, APPlayerContainer
-from .Randomizer.SeedId import gen_seed_id
 from .ClientUtils import VERSION
 from .Items import (
     ITEM_TABLE,
@@ -39,6 +38,7 @@ from worlds.LauncherComponents import (
     launch_subprocess,
 )
 
+from .Randomizer.SeedId import gen_seed_id
 from .Randomizer.SettingsEncoder import get_item_placements, get_setting_string
 from .Randomizer.ItemPool import (
     DUNGEON_TO_BOSS_DEFEAT,
