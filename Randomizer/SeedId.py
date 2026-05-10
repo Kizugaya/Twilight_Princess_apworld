@@ -1,22 +1,23 @@
 from BaseClasses import MultiWorld
+from worlds.AutoWorld import World
 
 
-def gen_seed_id(multiworld: MultiWorld):
-    chosen_noun = multiworld.random.choice(noun)
-    chosen_adj = multiworld.random.choice(adjective)
+def gen_seed_id(world: World):
+    chosen_noun = world.random.choice(noun)
+    chosen_adj = world.random.choice(adjective)
 
     seed_id = chosen_adj + chosen_noun
 
     if len(seed_id) > 16:
-        chosen_noun = multiworld.random.choice(noun)
-        chosen_adj = multiworld.random.choice(adjective)
+        chosen_noun = world.random.choice(noun)
+        chosen_adj = world.random.choice(adjective)
 
         seed_id = chosen_adj + chosen_noun
         if len(seed_id) > 16:
             seed_id = seed_id[:16]
 
     for _ in range(len(seed_id) - 16):
-        seed_id = seed_id + multiworld.random.randint(0, 9)
+        seed_id = seed_id + world.random.randint(0, 9)
 
     return seed_id
 

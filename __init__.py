@@ -1430,7 +1430,7 @@ class TPWorld(World):
         item_str, debug_str = get_item_placements(self.multiworld, self.player)
 
         setting_string = get_setting_string(self.multiworld, self.player)
-        self.seed_id = gen_seed_id(self.multiworld)
+        self.seed_id = gen_seed_id(self)
         # Output seed name and slot number to seed RNG in randomizer client.
         output_data = {
             "SettingsString": setting_string,
