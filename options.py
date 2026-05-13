@@ -223,14 +223,17 @@ class MapAndCompassSettings(DungeonItem):
     display_name = "Randomize Maps & Compasses"
 
 
-class DungeonRewardsProgression(Toggle):
+class DungeonRewardsProgression(Choice):
     """
     Controls whether dungeon reward and heart containers are forced to have progression items.
 
     """
 
     display_name = "Dungeon Rewards are prgression"
-    default = True
+    option_any_progressive = 2
+    option_vanilla = 1
+    option_anything = 0
+    default = 0
 
 
 class SmallKeysOnBosses(Toggle):
@@ -518,7 +521,7 @@ class OpenDoorOfTime(Toggle):
     """
 
     display_name = "Open Door of Time"
-    default = True
+    default = False
 
 
 class DamageMagnification(Choice):

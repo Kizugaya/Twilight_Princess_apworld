@@ -378,6 +378,10 @@ item_name_groups = {
         "Piece of Heart",
         "Heart Container",
     },
+    "Boss items": {
+        "Progressive Mirror Shard",
+        "Progressive Fused Shadow",
+    },
     # "NPC Items": {},
     # "Shop Items": {},
     # "Overworld Items": {},

@@ -397,7 +397,7 @@ class TPWorld(World):
         # If dungeon rewards are progression then take a second pass to update Progress Type
         if (
             self.options.dungeon_rewards_progression.value
-            == DungeonRewardsProgression.option_true
+            == DungeonRewardsProgression.option_any_progressive
         ):
             for location, data in LOCATION_TABLE.items():
                 if (
@@ -512,6 +512,8 @@ class TPWorld(World):
 
         pre_fill_items = self.get_pre_fill_items()
 
+        collection_state_base = CollectionState(self.multiworld)
+
         if self.options.early_shadow_crystal == EarlyShadowCrystal.option_true:
             found_shadow_crystal = False
             for item in pre_fill_items:
@@ -541,7 +543,75 @@ class TPWorld(World):
             assert (
                 self.options.early_shadow_crystal == EarlyShadowCrystal.option_false
             ), "[Twilight Princess] No pre fill items but early shadow crystal"
+            assert (
+                self.options.dungeon_rewards_progression.value
+                == DungeonRewardsProgression.option_vanilla
+            ), "[Twilight Princess] No pre fill items but Dungeon Rewards are vanilla"
             return
+
+        # Place boss items
+        if (
+            self.options.dungeon_rewards_progression.value
+            == DungeonRewardsProgression.option_vanilla
+        ):
+            boss_item_list = [
+                item
+                for item in pre_fill_items
+                if item.name in item_name_groups["Boss items"]
+            ]
+
+            assert (
+                len(boss_item_list) == 7
+            ), f"[Twilight Princess] There is only {len(boss_item_list)} boss items in the pre fill pool"
+
+            boss_item_list_str = [item.name for item in boss_item_list]
+
+            for boss_item in item_name_groups["Boss items"]:
+                assert (
+                    boss_item in boss_item_list_str
+                ), f"[Twilight Princess] {boss_item=} is not in pre_fill_items, {pre_fill_items=}"
+            del boss_item
+            boss_locations = [
+                "Arbiters Grounds Dungeon Reward",
+                "City in The Sky Dungeon Reward",
+                "Forest Temple Dungeon Reward",
+                "Goron Mines Dungeon Reward",
+                "Lakebed Temple Dungeon Reward",
+                "Snowpeak Ruins Dungeon Reward",
+                "Temple of Time Dungeon Reward",
+            ]
+            mirror_locations = self.random.sample(
+                boss_locations,
+                k=4,
+            )
+
+            shard_locations = [
+                location
+                for location in boss_locations
+                if location not in mirror_locations
+            ]
+
+            assert (
+                len(mirror_locations) == 4
+            ), f"[Twilight Princess] Mirror locations is not 4 {mirror_locations}"
+            assert (
+                len(shard_locations) == 3
+            ), f"[Twilight Princess] Shard locations is not 3 {shard_locations=} {mirror_locations=}"
+
+            for boss_item in boss_item_list:
+                if boss_item.name == "Progressive Mirror Shard":
+                    location = mirror_locations.pop()
+                elif boss_item.name == "Progressive Fused Shadow":
+                    location = shard_locations.pop()
+                else:
+                    assert (
+                        False
+                    ), f"[Twilight Princess] Bad boss item in list {boss_item=}"
+
+                self.get_location(location).place_locked_item(boss_item)
+                pre_fill_items.remove(boss_item)
+                collection_state_base.collect(boss_item)
+            del boss_item
 
         # Shuffle Bugs into vanilla spots if not shuffled
         if self.options.golden_bugs_shuffled.value == GoldenBugsShuffled.option_false:
@@ -567,6 +637,7 @@ class TPWorld(World):
                 vanilla_location_name = VANILLA_GOLDEN_BUG_LOCATIONS[bug.name]
                 self.get_location(vanilla_location_name).place_locked_item(bug)
                 pre_fill_items.remove(bug)
+                collection_state_base.collect(bug)
             del bug
 
         # Shuffle Poes into vanilla spots if not shuffled
@@ -583,6 +654,7 @@ class TPWorld(World):
                 location = VANILLA_POE_LOCATIONS[i]
                 self.get_location(location).place_locked_item(poe_soul)
                 pre_fill_items.remove(poe_soul)
+                collection_state_base.collect(poe_soul)
             assert (
                 location == "Snowpeak Poe Among Trees"
             ), f"[Twilight Princess] {location=}"
@@ -612,13 +684,12 @@ class TPWorld(World):
                 location = VANILLA_SKY_CHARACTER_LOCATIONS[i]
                 self.get_location(location).place_locked_item(character)
                 pre_fill_items.remove(character)
+                collection_state_base.collect(character)
             assert (
                 location == "Lake Hylia Bridge Owl Statue Sky Character"
             ), f"[Twilight Princess] {location=}"
             # Sky book chest will already be excluded
             del location, character_list, character
-
-        collection_state_base = CollectionState(self.multiworld)
 
         if self.options.early_shadow_crystal == EarlyShadowCrystal.option_true:
             locations = self.multiworld.get_locations(self.player)
@@ -650,6 +721,7 @@ class TPWorld(World):
                 len(shadow_crystal_item_s) == 0
             ), "[Twilight Princess] Shadow crystal not placed"
             pre_fill_items.remove(shadow_crystal_item_copy[0])
+            collection_state_base.collect(shadow_crystal_item_copy[0])
 
             locations = None
 
@@ -1385,7 +1457,9 @@ class TPWorld(World):
             # Boss / Mini Boss
             if (data.flags & TPFlag.Boss) == TPFlag.Boss:
                 # Dungeon Rewards (Becomes Priority)
-                if self.options.dungeon_rewards_progression:  # or mini boss if made so
+                if self.options.dungeon_rewards_progression.value in [
+                    DungeonRewardsProgression.option_any_progressive
+                ]:  # or mini boss if made so
                     assert (
                         location.progress_type == LocationProgressType.PRIORITY
                     ), f"[Twilight Princess] (Post Fill Error) {location.name} is {location.progress_type} but Dungeons rewards are progression"
@@ -1570,7 +1644,7 @@ class TPWorld(World):
                         self.options.dungeons_shuffled.value
                         == DungeonsShuffled.option_false,
                         self.options.dungeon_rewards_progression.value
-                        == DungeonRewardsProgression.option_false,
+                        == DungeonRewardsProgression.option_anything,
                         self.options.heart_piece_shuffled.value
                         == HeartPieceShuffled.option_false,
                         self.options.hidden_skills_shuffled.value
@@ -1707,7 +1781,7 @@ class TPWorld(World):
             "DeathLink": self.options.death_link.value,
             "Settings": self.get_settings_map(),
             "LocationClassification": {},
-            "SeedID": self.seed_id,
+            "SeedID": self.seedID,
         }
 
         for location in self.get_locations():

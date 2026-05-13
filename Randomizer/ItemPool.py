@@ -7,6 +7,7 @@ from ...generic.Rules import set_rule
 from ..options import (
     CastleRequirements,
     DungeonItem,
+    DungeonRewardsProgression,
     EarlyShadowCrystal,
     GoldenBugsShuffled,
     PalaceRequirements,
@@ -418,6 +419,11 @@ def get_pool_core(world: "TPWorld") -> Tuple[List[str], List[str]]:
                     item == "Progressive Sky Book"
                     and world.options.sky_characters_shuffled.value
                     == SkyCharactersShuffled.option_false
+                )
+                or (
+                    item in item_name_groups["Boss items"]
+                    and world.options.dungeon_rewards_progression.value
+                    == DungeonRewardsProgression.option_vanilla
                 )
             ):
                 prefill_pool.extend([item] * data.quantity)
