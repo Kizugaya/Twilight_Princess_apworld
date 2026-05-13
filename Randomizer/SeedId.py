@@ -16,8 +16,12 @@ def gen_seed_id(world: World):
         if len(seed_id) > 16:
             seed_id = seed_id[:16]
 
-    for _ in range(len(seed_id) - 16):
-        seed_id = seed_id + world.random.randint(0, 9)
+    for _ in range(16 - len(seed_id)):
+        seed_id = seed_id + world.random.randint(0, 9).__str__()
+
+    assert (
+        len(seed_id) == 16
+    ), f"[Twilight Princess] Seed id was generated incorrectly and was not the right size {seed_id=}"
 
     return seed_id
 

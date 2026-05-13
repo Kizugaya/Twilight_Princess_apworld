@@ -50,7 +50,7 @@ CONNECTION_CONNECTED_STATUS = "Dolphin connected successfully."
 CONNECTION_INITIAL_STATUS = "Dolphin connection has not been initiated."
 
 RANDO_NOT_LOADED_MSG = "Randomizer is not loaded, Client will not work until fixed"
-WRONG_SEED_LOADED_MSG = "Invalid Seed; The wrong seed was loaded when connecting, please load the seed named: "
+WRONG_SEED_LOADED_MSG = "Invalid Seed; Either the wrong seed was loaded, or you are not in game yet; Seed to use: "
 CONNECT_IN_GAME_MSG = (
     "Please load a save file and gain control of link before attempting to connect"
 )
@@ -160,6 +160,16 @@ class TPCommandProcessor(ClientCommandProcessor):
         """Toggles Debug messages from showing"""
         global DEBUGGING
         DEBUGGING = not DEBUGGING
+
+    def _cmd_debug_name(self) -> None:
+        """Debug to get player name"""
+        logger.info(self.ctx.auth)
+        logger.info(read_string(read_pointer(0x800042BC) + 0x80, 16))
+
+    def _cmd_debug_seed(self) -> None:
+        """Debug to get player name"""
+        logger.info(self.ctx.SeedID)
+        logger.info(read_string(read_pointer(0x800042BC) + 0x70, 16))
 
     @mark_raw
     def _cmd_name(self, name: str = "") -> None:
@@ -315,13 +325,7 @@ class TPContext(CommonContext):
         if password_requested and not self.password:
             await super().server_auth(password_requested)
         if not self.auth:
-            if read_byte(SAVE_FILE_ADDR + 0x900) == 0x1:
-                self.auth = read_string(SLOT_NAME_ADDR, 0x40)
-            else:
-                await self.get_username()
-                write_name(self.auth)
-            await self.server_auth()
-            return
+            self.auth = read_string(read_pointer(0x800042BC) + 0x80, 16)
         await self.send_connect()
 
     def on_package(self, cmd: str, args: dict[str, Any]) -> None:
@@ -1393,6 +1397,10 @@ async def check_ingame(ctx: TPContext) -> bool:
 
     :return: `True` if the player is in-game, otherwise `False`.
     """
+
+    if not dolphin_memory_engine.is_hooked():
+        return False
+
     in_game = False
     seed_loaded = False
     seed_ptr = read_pointer(0x800042BC)
@@ -1423,7 +1431,7 @@ async def check_ingame(ctx: TPContext) -> bool:
             in_game = new_node != 0xFF
 
     if not in_game and (ctx.check_in_game_msg_timer + VALIDATION_TIME <= time.time()):
-        logger.warning(RANDO_NOT_LOADED_MSG)
+        # logger.warning(RANDO_NOT_LOADED_MSG)
         ctx.check_in_game_msg_timer = time.time()
     elif (
         (not seed_loaded)
