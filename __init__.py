@@ -190,7 +190,12 @@ class TPWorld(World):
         options = self.options
 
         enabled_flags = TPFlag.Always
-        enabled_flags |= TPFlag.Boss
+        enabled_flags |= (
+            TPFlag.Boss
+            if options.dungeon_rewards_progression
+            != DungeonRewardsProgression.option_anything
+            else TPFlag.Always
+        )
         enabled_flags |= TPFlag.MiniBoss
         enabled_flags |= add_flag(options.golden_bugs_shuffled, TPFlag.Bug)
         enabled_flags |= add_flag(options.shop_items_shuffled, TPFlag.Shop)
@@ -397,7 +402,7 @@ class TPWorld(World):
         # If dungeon rewards are progression then take a second pass to update Progress Type
         if (
             self.options.dungeon_rewards_progression.value
-            == DungeonRewardsProgression.option_any_progressive
+            != DungeonRewardsProgression.option_anything
         ):
             for location, data in LOCATION_TABLE.items():
                 if (
@@ -545,7 +550,7 @@ class TPWorld(World):
             ), "[Twilight Princess] No pre fill items but early shadow crystal"
             assert (
                 self.options.dungeon_rewards_progression.value
-                == DungeonRewardsProgression.option_vanilla
+                == DungeonRewardsProgression.option_anything
             ), "[Twilight Princess] No pre fill items but Dungeon Rewards are vanilla"
             return
 
@@ -580,37 +585,65 @@ class TPWorld(World):
                 "Snowpeak Ruins Dungeon Reward",
                 "Temple of Time Dungeon Reward",
             ]
-            mirror_locations = self.random.sample(
-                boss_locations,
-                k=4,
+            # mirror_locations = self.random.sample(
+            #     boss_locations,
+            #     k=4,
+            # )
+
+            state_locations = [self.get_location(name) for name in boss_locations]
+            assert (
+                len(state_locations) == 7
+            ), f"[Twilight Princess] State locations is invalid {state_locations=}"
+
+            state = self.multiworld.get_all_state()
+            for boss_item in boss_item_list:
+                state.remove(boss_item)
+
+            boss_items_copy = deepcopy(boss_item_list)
+
+            fill_restrictive(
+                self.multiworld,
+                state,
+                state_locations,
+                boss_item_list,
+                single_player_placement=True,
+                # lock=True,
+                allow_excluded=True,
             )
 
-            shard_locations = [
-                location
-                for location in boss_locations
-                if location not in mirror_locations
-            ]
-
             assert (
-                len(mirror_locations) == 4
-            ), f"[Twilight Princess] Mirror locations is not 4 {mirror_locations}"
-            assert (
-                len(shard_locations) == 3
-            ), f"[Twilight Princess] Shard locations is not 3 {shard_locations=} {mirror_locations=}"
-
-            for boss_item in boss_item_list:
-                if boss_item.name == "Progressive Mirror Shard":
-                    location = mirror_locations.pop()
-                elif boss_item.name == "Progressive Fused Shadow":
-                    location = shard_locations.pop()
-                else:
-                    assert (
-                        False
-                    ), f"[Twilight Princess] Bad boss item in list {boss_item=}"
-
-                self.get_location(location).place_locked_item(boss_item)
+                len(boss_item_list) == 0
+            ), "[Twilight Princess] All boss items not placed"
+            for boss_item in boss_items_copy:
                 pre_fill_items.remove(boss_item)
                 collection_state_base.collect(boss_item)
+
+            # shard_locations = [
+            #     location
+            #     for location in boss_locations
+            #     if location not in mirror_locations
+            # ]
+
+            # assert (
+            #     len(mirror_locations) == 4
+            # ), f"[Twilight Princess] Mirror locations is not 4 {mirror_locations}"
+            # assert (
+            #     len(shard_locations) == 3
+            # ), f"[Twilight Princess] Shard locations is not 3 {shard_locations=} {mirror_locations=}"
+
+            # for boss_item in boss_item_list:
+            #     if boss_item.name == "Progressive Mirror Shard":
+            #         location = mirror_locations.pop()
+            #     elif boss_item.name == "Progressive Fused Shadow":
+            #         location = shard_locations.pop()
+            #     else:
+            #         assert (
+            #             False
+            #         ), f"[Twilight Princess] Bad boss item in list {boss_item=}"
+
+            #     self.get_location(location).place_locked_item(boss_item)
+            #     pre_fill_items.remove(boss_item)
+            #     collection_state_base.collect(boss_item)
             del boss_item
 
         # Shuffle Bugs into vanilla spots if not shuffled
@@ -1458,7 +1491,8 @@ class TPWorld(World):
             if (data.flags & TPFlag.Boss) == TPFlag.Boss:
                 # Dungeon Rewards (Becomes Priority)
                 if self.options.dungeon_rewards_progression.value in [
-                    DungeonRewardsProgression.option_any_progressive
+                    DungeonRewardsProgression.option_any_progressive,
+                    DungeonRewardsProgression.option_vanilla,
                 ]:  # or mini boss if made so
                     assert (
                         location.progress_type == LocationProgressType.PRIORITY
