@@ -354,9 +354,9 @@ class TPContext(CommonContext):
                 ), f"{args["slot_data"]["SeedID"]=}"
                 self.SeedID = args["slot_data"]["SeedID"]
                 read_seedID = read_string(read_pointer(0x800042BC) + 0x70, 16)
-                if self.SeedID != read_seedID:
+                # if self.SeedID != read_seedID:
 
-                    raise Exception(WRONG_SEED_LOADED_MSG + self.SeedID)
+                #     raise Exception(WRONG_SEED_LOADED_MSG + self.SeedID)
 
             if args["slot_data"] is not None and "DeathLink" in args["slot_data"]:
                 assert isinstance(
@@ -982,6 +982,11 @@ def _validate_item(
 
 async def validate_items(ctx: TPContext) -> None:
 
+    if not await check_ingame(ctx):
+        ctx.insurance_queue = deque()
+        if DEBUGGING:
+            logger.info("Debug: Insurance occured during load game ")
+
     # Wait for timer to expire
     if ctx.validation_time_start + VALIDATION_TIME > time.time():
         return
@@ -1041,6 +1046,11 @@ async def validate_items(ctx: TPContext) -> None:
             ctx.insurance_queue.append([item_name, item_count])
 
         item_give_list: list[str] = []
+
+        if not await check_ingame(ctx):
+            ctx.insurance_queue = deque()
+            if DEBUGGING:
+                logger.info("Debug: Insurance occured during load game ")
 
         while len(ctx.insurance_queue) > 0:
 
@@ -1420,7 +1430,7 @@ async def check_ingame(ctx: TPContext) -> bool:
         in_game = current_node != 0xFF
 
     else:
-        await asyncio.sleep(3)
+        await asyncio.sleep(4)
         new_node = read_byte(CURR_NODE_ADDR)
 
         if new_node == 0x06:
