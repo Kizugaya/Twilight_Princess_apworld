@@ -298,6 +298,8 @@ class TPContext(CommonContext):
         self.validation_time_start = time.time()
         self.check_in_game_msg_timer = time.time()
         self.SeedID = ""
+        self.rando_loaded_message = False
+        self.connection_tried = False
         # Event is used for pause as it better represents how I want to think about it
         self.validation_pause = asyncio.Event()
 
@@ -319,13 +321,17 @@ class TPContext(CommonContext):
         assert isinstance(password_requested, bool)
 
         if not await check_ingame(self):
-            logger.info(CONNECT_IN_GAME_MSG)
-            return
+            raise Exception(CONNECT_IN_GAME_MSG)
 
         if password_requested and not self.password:
             await super().server_auth(password_requested)
         if not self.auth:
-            self.auth = read_string(read_pointer(0x800042BC) + 0x80, 16)
+            pointer = read_pointer(0x800042BC)
+            if pointer == 0:
+                raise Exception(
+                    "Failed to read Seed; Please Make sure dolphin is connected correctly"
+                )
+            self.auth = read_string(pointer + 0x80, 16)
         await self.send_connect()
 
     def on_package(self, cmd: str, args: dict[str, Any]) -> None:
@@ -353,10 +359,19 @@ class TPContext(CommonContext):
                     args["slot_data"]["SeedID"], str
                 ), f"{args["slot_data"]["SeedID"]=}"
                 self.SeedID = args["slot_data"]["SeedID"]
-                read_seedID = read_string(read_pointer(0x800042BC) + 0x70, 16)
-                # if self.SeedID != read_seedID:
+                pointer = read_pointer(0x800042BC)
+                if pointer == 0:
+                    raise Exception(
+                        "Failed to read Seed; Please Make sure dolphin is connected correctly"
+                    )
+                read_seedID = read_string(pointer + 0x70, 16)
+                if DEBUGGING:
+                    logger.info(
+                        f"Debug: Connected checking seed ids\nServer wants: {self.SeedID}\nClient has:  {read_seedID}"
+                    )
+                if self.SeedID != read_seedID:
 
-                #     raise Exception(WRONG_SEED_LOADED_MSG + self.SeedID)
+                    raise Exception(WRONG_SEED_LOADED_MSG + self.SeedID)
 
             if args["slot_data"] is not None and "DeathLink" in args["slot_data"]:
                 assert isinstance(
@@ -1447,6 +1462,7 @@ async def check_ingame(ctx: TPContext) -> bool:
         (not seed_loaded)
         and in_game
         and (ctx.check_in_game_msg_timer + VALIDATION_TIME <= time.time())
+        and ctx.connection_tried
     ):
         logger.warning(WRONG_SEED_LOADED_MSG + ctx.SeedID)
         ctx.check_in_game_msg_timer = time.time()
@@ -1498,6 +1514,9 @@ async def dolphin_sync_task(ctx: TPContext) -> None:
                 if not await check_ingame(ctx):
                     await asyncio.sleep(0.1)
                     continue
+                if not ctx.rando_loaded_message:
+                    logger.info("Randomizer loaded, have fun")
+                    ctx.rando_loaded_message = True
                 if ctx.slot is not None:
                     if "DeathLink" in ctx.tags:
                         await check_death(ctx)
