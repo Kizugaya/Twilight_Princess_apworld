@@ -569,6 +569,15 @@ class StartingToD(Choice):
     default = 0
 
 
+class StartWithHorseCall(Toggle):
+    """
+    If enabled, you will spawn with horse call
+    """
+
+    display_name = "Start with Horse Call"
+    default = False
+
+
 # endregion
 
 
@@ -629,6 +638,7 @@ class TPOptions(PerGameCommonOptions):
     damage_magnification: DamageMagnification
     starting_tod: StartingToD
     # hint_distribution: HintDistribution
+    start_with_horse_call: StartWithHorseCall
 
     # Dungeon Entrance Settings
     skip_lakebed_entrance: SkipLakebedEntrance
@@ -695,6 +705,7 @@ tp_option_groups: list[OptionGroup] = [
             IncreaseSpinnerSpeed,
             OpenDoorOfTime,
             EarlyShadowCrystal,
+            StartWithHorseCall,
         ],
         start_collapsed=True,
     ),

@@ -5,6 +5,9 @@ from ..Items import TPItem
 from ..Locations import TPLocation
 from ..options import *
 
+if TYPE_CHECKING:
+    from .. import TPWorld
+
 char_map = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"
 
 # Based off of:
@@ -208,6 +211,10 @@ def get_setting_string(multiworld: MultiWorld, player: int):
             item.item_id, int
         ), f"[Twilight Princess] {item=} does not have a valid item id"
         item_bit_string += encode_num_as_bits(item.item_id, 9)
+
+    world: TPWorld = multiworld.worlds[player]
+    if world.options.start_with_horse_call:
+        item_bit_string += encode_num_as_bits(0x84, 9)
 
     item_bit_string += "111111111"
 
