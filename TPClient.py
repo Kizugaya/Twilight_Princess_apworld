@@ -1264,10 +1264,10 @@ async def check_locations(ctx: TPContext) -> None:
                 server_copy_value, int
             ), f"{server_copy_key=}, {server_copy_value=}"
 
-            room_address = SAVE_FILE_ADDR + 0x27220
+            layer_address = SAVE_FILE_ADDR + 0x27220
             if REGION_CODE == 0x50:
-                room_address += 0x20
-            current_room = read_byte(room_address)
+                layer_address += 0x20
+            current_room = read_byte(layer_address)
 
             assert isinstance(current_room, int), f"{current_room=}"
 
@@ -1286,6 +1286,33 @@ async def check_locations(ctx: TPContext) -> None:
                     }
                 )
                 results.append({server_copy_key: current_room})
+        elif data["Region"] == "Layer":
+            assert isinstance(
+                server_copy_value, int
+            ), f"{server_copy_key=}, {server_copy_value=}"
+
+            layer_address = SAVE_FILE_ADDR + 0x4E0B
+            current_layer = read_byte(layer_address)
+
+            assert isinstance(current_layer, int), f"{current_layer=}"
+
+            if current_layer != server_copy_value:
+                if DEBUGGING:
+                    logger.info(
+                        f"Debug: {server_copy_key} Ready to be set to {current_layer}"
+                    )
+                messages.append(
+                    {
+                        "cmd": "Set",
+                        "key": data["key"],
+                        "default": data["default"],
+                        "want_reply": False,
+                        "operations": [
+                            {"operation": "replace", "value": current_layer}
+                        ],
+                    }
+                )
+                results.append({server_copy_key: current_layer})
         elif data["Region"] == "Stage":
             assert isinstance(
                 server_copy_value, str

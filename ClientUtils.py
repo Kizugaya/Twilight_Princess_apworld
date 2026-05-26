@@ -306,6 +306,13 @@ server_data = [
         "Region": "Floor",
     },
     {
+        "key": "Current Layer",
+        "default": -1,
+        "want_reply": False,
+        "operations": [],
+        "Region": "Layer",
+    },
+    {
         "key": "Diababa Defeated",
         "default": False,
         "want_reply": False,
