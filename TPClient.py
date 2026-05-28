@@ -86,11 +86,11 @@ def set_address(
     if regionCode is None:
         regionCode = read_byte(0x80000003)
     saveFileAddr = 0x804061C0  # US by default
-    STRING_ENCODING = "ascii"
+    STRING_ENCODING = "latin"
     match (regionCode):
         case 0x50:  # ASCII for 'P', which is EU
             saveFileAddr = 0x80408160
-            STRING_ENCODING = "ascii"
+            STRING_ENCODING = "latin"
         case 0x4A:  # ASCII for 'J', which is JP
             saveFileAddr = 0x80400300
             STRING_ENCODING = "shift-jis"

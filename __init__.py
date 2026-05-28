@@ -234,6 +234,12 @@ class TPWorld(World):
             raise OptionError(
                 "[Twilight Princess] Player name must be 16 character or less"
             )
+        try:
+            str.encode(self.player_name, encoding="latin")
+        except UnicodeEncodeError:
+            raise OptionError(
+                "[Twilight Princess] Player name cannot use special characters that do not fit in the Latin encoding."
+            )
 
         # If overworld is not shuffled then override for vanilla placements if in overworld (locations already excluded but prefill needs note)
         if self.options.overworld_shuffled.value == OverWoldShuffled.option_false:
