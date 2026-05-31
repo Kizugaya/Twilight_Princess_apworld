@@ -1353,23 +1353,27 @@ async def check_locations(ctx: TPContext) -> None:
             result = SAVE_FILE_ADDR + 0x4AC98
             if REGION_CODE == 0x50:
                 result += 0x20
-            current_room = read_byte(result)
+            current_floor = read_byte(result)
 
-            assert isinstance(result, int), f"{result=}"
+            assert isinstance(current_floor, int), f"{current_floor=}"
 
-            if result != server_copy_value:
+            if current_floor != server_copy_value:
                 if DEBUGGING:
-                    logger.info(f"Debug: {server_copy_key} Ready to be set to {result}")
+                    logger.info(
+                        f"Debug: {server_copy_key} Ready to be set to {current_floor}"
+                    )
                 messages.append(
                     {
                         "cmd": "Set",
                         "key": data["key"],
                         "default": data["default"],
                         "want_reply": False,
-                        "operations": [{"operation": "replace", "value": result}],
+                        "operations": [
+                            {"operation": "replace", "value": current_floor}
+                        ],
                     }
                 )
-                results.append({server_copy_key: result})
+                results.append({server_copy_key: current_floor})
         else:
             assert False, f"{data=}"
 
