@@ -760,7 +760,7 @@ def create_regions(multiworld: MultiWorld, player: int) -> Dict[str, Region]:
     mirror_chamber_upper = Region("Mirror Chamber Upper", player, multiworld)
     multiworld.regions.append(mirror_chamber_upper)
 
-    mirror_chamber_portal = Region("Mirror of Twilight", player, multiworld)
+    mirror_chamber_portal = Region("Mirror Chamber Portal", player, multiworld)
     multiworld.regions.append(mirror_chamber_portal)
 
     castle_town_west = Region("Castle Town West", player, multiworld)
