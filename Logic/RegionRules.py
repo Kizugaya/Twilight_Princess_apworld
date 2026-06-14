@@ -3697,7 +3697,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Mirror Chamber Upper -> Mirror of Twilight"),
+        world.get_entrance("Mirror Chamber Upper -> Mirror Chamber Portal"),
         lambda state: (
             can_defeat_ShadowBeast(state, player)
             and (
@@ -3731,12 +3731,12 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Mirror of Twilight -> Mirror Chamber Upper"),
+        world.get_entrance("Mirror Chamber Portal -> Mirror Chamber Upper"),
         lambda state: (can_defeat_ShadowBeast(state, player)),
     )
 
     set_rule_if_exits(
-        world.get_entrance("Mirror of Twilight -> Palace of Twilight Entrance"),
+        world.get_entrance("Mirror Chamber Portal -> Palace of Twilight Entrance"),
         lambda state: (True),
     )
 
