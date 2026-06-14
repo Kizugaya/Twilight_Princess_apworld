@@ -2025,18 +2025,18 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Mirror Chamber Upper", player).connect(
-        multiworld.get_region("Mirror of Twilight", player),
-        "Mirror Chamber Upper -> Mirror of Twilight",
+        multiworld.get_region("Mirror Chamber Portal", player),
+        "Mirror Chamber Upper -> Mirror Chamber Portal",
     )
 
-    multiworld.get_region("Mirror of Twilight", player).connect(
+    multiworld.get_region("Mirror Chamber Portal", player).connect(
         multiworld.get_region("Mirror Chamber Upper", player),
-        "Mirror of Twilight -> Mirror Chamber Upper",
+        "Mirror Chamber Portal -> Mirror Chamber Upper",
     )
 
-    multiworld.get_region("Mirror of Twilight", player).connect(
+    multiworld.get_region("Mirror Chamber Portal", player).connect(
         multiworld.get_region("Palace of Twilight Entrance", player),
-        "Mirror of Twilight -> Palace of Twilight Entrance",
+        "Mirror Chamber Portal -> Palace of Twilight Entrance",
     )
 
     multiworld.get_region("Castle Town West", player).connect(
