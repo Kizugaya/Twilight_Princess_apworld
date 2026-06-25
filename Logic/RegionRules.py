@@ -1299,7 +1299,6 @@ def set_region_access_rules(world: "TPWorld", player: int):
         # This is only to apease the unit tests, this region cannot be exited by glitchless.
         # lambda state: (False),
         lambda state: (can_smash(state, player)),
-        lambda state: (can_smash(state, player)),
     )
     set_rule_if_exits(
         world.get_entrance(
