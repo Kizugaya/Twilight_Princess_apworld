@@ -227,7 +227,11 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance(
             "City in The Sky Lobby -> City in The Sky Central Tower Second Floor"
         ),
-        lambda state: (False),
+        lambda state: (
+            state.can_reach_region("City in the Sky Central Tower Second Floor", player)
+            and state.has("Progressive Clawshot", player, 1)
+            and state.has("Iron Boots", player)
+        ),
         lambda state: (
             state.has("Progressive Clawshot", player)
             and state.has("Shadow Crystal", player)
@@ -538,13 +542,20 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Goron Mines Magnet Room -> Goron Mines Lower West Wing"),
         lambda state: (
-            (
-                state.has("Goron Mines Small Key", player, 1)
-                # Holdover from Keysy
-                # or (
-                #     state._tp_small_key_settings(player)
-                #     == SmallKeySettings.option_keysy
-                # )
+            state.has("Goron Mines Small Key", player, 1)
+            # or (
+            #     Setting GM Shortcut == True
+            #     and state.has("Iron Boots", player)
+            # )
+        ),
+        lambda state: (
+            state.has("Goron Mines Small Key", player, 1)
+            or (
+                (
+                    False # Setting GM Shortcut == True
+                    or has_sword(state, player)
+                )
+                and state.has("Iron Boots", player)
             )
         ),
     )
@@ -556,11 +567,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
         lambda state: (
             (
                 state.has("Goron Mines Small Key", player, 1)
-                # Holdover from Keysy
-                # or (
-                #     state._tp_small_key_settings(player)
-                #     == SmallKeySettings.option_keysy
-                # )
+                # or Setting GM Shortcut == true
             )
             and state.has("Iron Boots", player)
         ),
@@ -705,7 +712,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
         lambda state: (
             can_defeat_bokoblin(state, player)
             and can_defeat_lizalfos(state, player)
-            and False # Setting HC Shortcut
+            and False # Setting HC Shortcut == True
             and state.has("Progressive Clawshot", player, 2)
         ),
     )
@@ -809,7 +816,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
                 state.has("Lantern", player)
                 and can_defeat_dinalfos(state, player)
             )
-            or False # Setting HC Shortcut
+            or False # Setting HC Shortcut == True
         ),
     )
 
@@ -870,29 +877,15 @@ def set_region_access_rules(world: "TPWorld", player: int):
             and state.has("Progressive Clawshot", player, 2)
             and can_defeat_Darknut(state, player)
             and can_defeat_Lizalfos(state, player)
-            and (
-                state.has("Hyrule Castle Big Key", player)
-                # Holdover from Keysy
-                # or (
-                #     state._tp_big_key_settings(player)
-                #     == BigKeySettings.option_keysy
-                # )
-            )
+            and state.has("Hyrule Castle Big Key", player)
             and can_defeat_Ganondorf(state, player)
         ),
         lambda state: (
             (state.has("Spinner", player) or can_do_js_lja(state, player))
-            and state.has("Progressive Clawshot", player)
+            and state.has("Progressive Clawshot", player, 1)
             and can_defeat_Darknut(state, player)
             and can_defeat_Lizalfos(state, player)
-            and (
-                state.has("Hyrule Castle Big Key", player)
-                # Holdover from Keysy
-                # or (
-                #     state._tp_big_key_settings(player)
-                #     == BigKeySettings.option_keysy
-                # )
-            )
+            and state.has("Hyrule Castle Big Key", player)
             and can_defeat_Ganondorf(state, player)
         ),
     )
@@ -1281,7 +1274,6 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance(
             "Snowpeak Ruins Caged Freezard Room Lower -> Snowpeak Ruins Caged Freezard Room"
         ),
-        lambda state: (False),
         lambda state: (state.has("Progressive Clawshot", player, 1)),
     )
 
@@ -1400,17 +1392,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance(
             "Snowpeak Ruins Northeast Chilfos Room First Floor -> Snowpeak Ruins East Courtyard"
         ),
-        lambda state: (True),
-        lambda state: (
-            (
-                state.has("Snowpeak Ruins Small Key", player, 4)
-                # Holdover from Keysy
-                # or (
-                #     state._tp_small_key_settings(player)
-                #     == SmallKeySettings.option_keysy
-                # )
-            )
-        ),
+        lambda state: (state.has("Snowpeak Ruins Small Key", player, 4)),
     )
 
     set_rule_if_exits(
@@ -1587,15 +1569,8 @@ def set_region_access_rules(world: "TPWorld", player: int):
             state.has("Ball and Chain", player)
             or (
                 (
-                    (
-                        state.has("Snowpeak Ruins Small Key", player, 2)
-                        or state.has("Ordon Goat Cheese", player)
-                    )
-                    # Holdover from Keysy
-                    # or (
-                    #     state._tp_small_key_settings(player)
-                    #     == SmallKeySettings.option_keysy
-                    # )
+                    state.has("Snowpeak Ruins Small Key", player, 2)
+                    or state.has("Ordon Goat Cheese", player)
                 )
                 and has_bombs(state, player)
             )
@@ -1604,15 +1579,8 @@ def set_region_access_rules(world: "TPWorld", player: int):
             state.has("Ball and Chain", player)
             or (
                 (
-                    (
-                        state.has("Snowpeak Ruins Small Key", player, 4)
-                        or state.has("Ordon Goat Cheese", player)
-                    )
-                    # Holdover from Keysy
-                    # or (
-                    #     state._tp_small_key_settings(player)
-                    #     == SmallKeySettings.option_keysy
-                    # )
+                    state.has("Snowpeak Ruins Small Key", player, 4)
+                    or state.has("Ordon Goat Cheese", player)
                 )
                 and has_bombs(state, player)
             )
@@ -1630,7 +1598,11 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance(
             "Snowpeak Ruins Wooden Beam Room -> Snowpeak Ruins West Cannon Room"
         ),
-        lambda state: (True),
+        lambda state: (state.has("Ball and Chain", player)),
+        lambda state: (
+            state.has("Ball and Chain", player)
+            or state.has("Shadow Crystal", player)
+        ),
     )
 
     set_rule_if_exits(
@@ -1814,14 +1786,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
                 and can_defeat_Lizalfos(state, player)
                 and can_defeat_Dinalfos(state, player)
                 and can_defeat_Darknut(state, player)
-                and (
-                    state.has("Temple of Time Small Key", player, 3)
-                    # Holdover from Keysy
-                    # or (
-                    #     state._tp_small_key_settings(player)
-                    #     == SmallKeySettings.option_keysy
-                    # )
-                )
+                and state.has("Temple of Time Small Key", player, 3)
             )
             or (state._tp_tot_entrance(player))
         ),
@@ -1944,6 +1909,18 @@ def set_region_access_rules(world: "TPWorld", player: int):
                 can_defeat_Goron(state, player)
                 or can_complete_goron_mines(state, player)
             )
+            and True # can_complete_eldin_twilight(state, player)
+        ),
+        lambda state: (
+            (
+                state.has("Iron Boots", player)
+                or has_shield(state, player)
+            )
+            and (
+                can_defeat_Goron(state, player)
+                or can_complete_goron_mines(state, player)
+            )
+            and True # can_complete_eldin_twilight(state, player)
         ),
     )
 
@@ -2167,12 +2144,18 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Kakariko Gorge -> Kakariko Gorge Behind Gate"),
-        lambda state: (True),
+        lambda state: (
+            False # can_complete_eldin_twilight(state, player)
+            or state.can_reach_region("Faron Field", player)
+            or state.has("Shadow Crystal", player)
+        ),
     )
 
     set_rule_if_exits(
         world.get_entrance("Kakariko Gorge -> Faron Field"),
-        lambda state: (True),
+        lambda state: (
+            True # can_complete_eldin_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -2182,7 +2165,10 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Kakariko Gorge -> Kakariko Gorge Keese Grotto"),
-        lambda state: (state.has("Shadow Crystal", player)),
+        lambda state: (
+            state.has("Shadow Crystal", player)
+            and True # can_complete_eldin_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -2225,10 +2211,24 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Eldin Field -> Eldin Field Near Castle Town"),
-        lambda state: (state.can_reach_region("Eldin Field Near Castle Town", player)),
         lambda state: (
-            state.can_reach_region("Kakariko Malo Mart", player)
-            or state.has("Shadow Crystal", player)
+            (
+                state.can_reach_region("Eldin Field Near Castle Town", player)
+                # and can_complete_eldin_twilight(state, player)
+                # and can_complete_lanayru_twilight(state, player)
+                and state.can_reach_region("Kakariko Malo Mart")
+            )
+            # or Setting Skip Bridge Donation == True 
+        ),
+        lambda state: (
+            (
+                (
+                    state.can_reach_region("Kakariko Malo Mart", player)
+                    or state.has("Shadow Crystal", player)
+                )
+                # and can_complete_eldin_twilight(state, player)
+            )
+            # or Setting Skip Bridge Donation == True
         ),
     )
 
@@ -2277,7 +2277,14 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Eldin Field Near Castle Town -> Eldin Field"),
-        lambda state: (state.can_reach_region("Kakariko Malo Mart", player)),
+        lambda state: (
+            (
+                state.can_reach_region("Kakariko Malo Mart", player)
+                # and can_complete_eldin_twilight(state, player)
+                # and can_complete_lanayru_twilight(state, player)
+            )
+            # or Setting Skip Bridge Donation == True
+        ),
     )
 
     set_rule_if_exits(
@@ -2318,8 +2325,11 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("North Eldin Field -> Eldin Field Outside Hidden Village"),
         lambda state: (
-            state.can_reach_region("Kakariko Renados Sanctuary", player)
-            and state.has("Wooden Statue", player)
+            (
+                state.can_reach_region("Kakariko Renados Sanctuary", player)
+                and state.has("Wooden Statue", player)
+            )
+            or False # Setting Ilia Quest == Charm
         ),
     )
 
@@ -2330,7 +2340,9 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("North Eldin Field -> Lanayru Field"),
-        lambda state: (True),
+        lambda state: (
+            True # can_complete_eldin_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -2398,8 +2410,14 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Lower Kakariko Village -> Upper Kakariko Village"),
         lambda state: (
-            (can_complete_goron_mines(state, player) and can_change_time(state, player))
-            or can_smash(state, player)
+            (
+                (
+                    can_complete_goron_mines(state, player)
+                    and can_change_time(state, player)
+                )
+                or can_smash(state, player)
+            )
+            and True # can_complete_eldin_twilight(state, player)
         ),
         lambda state: (
             can_complete_goron_mines(state, player) or can_smash(state, player)
@@ -2408,7 +2426,9 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Lower Kakariko Village -> Kakariko Village Behind Gate"),
-        lambda state: (True),
+        lambda state: (
+            True # can_complete_eldin_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -2492,9 +2512,14 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Upper Kakariko Village -> Kakariko Top of Watchtower"),
         lambda state: (
-            can_complete_goron_mines(state, player) and can_change_time(state, player)
+            can_complete_goron_mines(state, player)
+            and can_change_time(state, player)
+            and True # can_complete_eldin_twilight(state, player)
         ),
-        lambda state: (can_complete_goron_mines(state, player)),
+        lambda state: (
+            can_complete_goron_mines(state, player)
+            and True # can_complete_eldin_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -2531,10 +2556,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance("Kakariko Village Behind Gate -> Lower Kakariko Village"),
         lambda state: (
             state.has("Gate Keys", player)
-            # Holdover from Keysy
-            # or (
-            #     state._tp_small_key_settings(player) == SmallKeySettings.option_keysy
-            # )
+            or True # can_complete_eldin_twilight(state, player)
         ),
     )
 
@@ -2785,29 +2807,33 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Kakariko Graveyard -> Lake Hylia"),
         lambda state: (
-            (
-                state.has("Gate Keys", player)
-                # Holdover from Keysy
-                # or (
-                #     state._tp_small_key_settings(player)
-                #     == SmallKeySettings.option_keysy
-                # )
+            state.has("Gate Keys", player)
+            and (
+                state.has("Iron Boots", player)
+                or state.has("Zora Armor", player)
             )
-            and (state.has("Iron Boots", player) or state.has("Zora Armor", player))
             and can_use_water_bombs(state, player)
+            and True # can_complete_eldin_twilight(state, player)
         ),
         lambda state: (
             (
                 has_heavy_mod(state, player)
                 and can_use_water_bombs(state, player)
                 and state.has("Gate Keys", player)
+                and True # can_complete_eldin_twilight(state, player)
             )
             or (
-                (has_heavy_mod(state, player) or state.has("Zora Armor", player))
+                (
+                    has_heavy_mod(state, player)
+                    or state.has("Zora Armor", player)
+                )
                 and (
                     (
                         has_bombs(state, player)
-                        and (has_sword(state, player) or state.has("Spinner", player))
+                        and (
+                            has_sword(state, player)
+                            or state.has("Spinner", player)
+                        )
                     )
                     or can_do_lja(state, player)
                     or can_do_moon_boots(state, player)
@@ -2818,7 +2844,11 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("South Faron Woods -> South Faron Woods Behind Gate"),
-        lambda state: (True),
+        lambda state: (
+            True
+            # state.has("Faron Woods Coro Key", player)
+            # or state.has("Shadow Crystal", player)
+        ),
     )
 
     set_rule_if_exits(
@@ -2828,12 +2858,19 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("South Faron Woods -> Ordon Bridge"),
-        lambda state: (True),
+        lambda state: (
+            True # can_complete_prologue(state, player)
+            and True # can_complete_faron_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
         world.get_entrance("South Faron Woods -> Faron Field"),
-        lambda state: (can_clear_forest(state, player)),
+        lambda state: (
+            can_clear_forest(state, player)
+            and True # can_complete_faron_twilight(state, player)
+            and True # can_complete_prologue(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -2843,7 +2880,11 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("South Faron Woods Behind Gate -> South Faron Woods"),
-        lambda state: (True),
+        lambda state: (
+            True
+            # state.has("Shadow Crystal", player)
+            # or state.has("Faron Woods Coro Key", player)
+        ),
     )
 
     set_rule_if_exits(
@@ -2878,6 +2919,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
             can_clear_forest(state, player)
             and state.has("Progressive Dominion Rod", player, 2)
             and state.has("Shadow Crystal", player)
+            and True # can_complete_faron_twilight(state, player)
         ),
     )
 
@@ -2991,7 +3033,13 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance(
             "Mist Area Inside Mist -> Mist Area Outside Faron Mist Cave"
         ),
-        lambda state: (state.has("Lantern", player)),
+        lambda state: (
+            state.has("Lantern", player)
+            and (
+                True # can_complete_faron_twilight(state, player)
+                or state.has("Shadow Crysstal", player)
+            )
+        ),
         lambda state: (
             state.has("Lantern", player)
             or (
@@ -3156,12 +3204,12 @@ def set_region_access_rules(world: "TPWorld", player: int):
         ),
         lambda state: (
             state.has("Shadow Crystal", player)
-            # and can_complete_faron_twilight(state, player)
+            and True # can_complete_faron_twilight(state, player)
         ),
         lambda state: (
             (
                 state.has("Shadow Crystal", player)
-                # and can_complete_faron_twilight(state, player)
+                and True # can_complete_faron_twilight(state, player)
             )
             or (
                 has_bombs(state, player)
@@ -3237,14 +3285,20 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Lost Woods -> Lost Woods Lower Battle Arena"),
         lambda state: (
-            (can_defeat_SkullKid(state, player) and state.has("Shadow Crystal", player))
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)
+            (
+                can_defeat_SkullKid(state, player)
+                and state.has("Shadow Crystal", player)
+            )
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open)        # Setting Skip Grove Entrance == True
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)  # 
         ),
         lambda state: (
-            (can_defeat_SkullKid(state, player) and state.has("Shadow Crystal", player))
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)
+            (
+                can_defeat_SkullKid(state, player)
+                and state.has("Shadow Crystal", player)
+            )
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open)        # Setting Skip Grove Entrance == True
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)  # 
             or can_do_js_moon_boots(state, player)
         ),
     )
@@ -3252,9 +3306,12 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Lost Woods -> Lost Woods Upper Battle Arena"),
         lambda state: (
-            (can_defeat_SkullKid(state, player) and state.has("Shadow Crystal", player))
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)
+            (
+                can_defeat_SkullKid(state, player)
+                and state.has("Shadow Crystal", player)
+            )
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open)        # Setting Skip Grove Entrance == True
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)  # 
         ),
     )
 
@@ -3272,8 +3329,8 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance("Lost Woods Lower Battle Arena -> Sacred Grove Lower"),
         lambda state: (
             can_defeat_SkullKid(state, player)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open)        # Setting Skip Grove Entrance == True
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)  # 
         ),
     )
 
@@ -3292,8 +3349,8 @@ def set_region_access_rules(world: "TPWorld", player: int):
         ),
         lambda state: (
             can_defeat_SkullKid(state, player)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open)        # Setting Skip Grove Entrance == True
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)  # 
         ),
     )
 
@@ -3335,13 +3392,13 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance("Sacred Grove Lower -> Sacred Grove Upper"),
         lambda state: (
             state.can_reach_region("Sacred Grove Before Block", player)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open)        # Setting Skip Grove Entrance == True
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)  # 
         ),
         lambda state: (
             state.can_reach_region("Sacred Grove Before Block", player)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open)        # Setting Skip Grove Entrance == True
+            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)  # 
             or can_do_js_moon_boots(state, player)
         ),
     )
@@ -3643,7 +3700,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Mirror Chamber Lower -> Arbiters Grounds Boss Room"),
         lambda state: (
-            state.can_reach_region("Kakariko Malo Mart", player)
+            state.can_reach_region("Arbiters Grounds Boss Room", player)
             and can_defeat_Stallord(state, player)
         ),
     )
@@ -3655,7 +3712,13 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Mirror Chamber Upper -> Mirror Chamber Lower"),
-        lambda state: (can_defeat_ShadowBeast(state, player)),
+        lambda state: (
+            can_defeat_ShadowBeast(state, player)
+            or False # (
+            #     state.has("Shadow Crystal", player)
+            #     and state.has("Mirror Chamber Portal Item", player)
+            # )
+        ),
     )
 
     set_rule_if_exits(
@@ -3694,7 +3757,13 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Mirror Chamber Portal -> Mirror Chamber Upper"),
-        lambda state: (can_defeat_ShadowBeast(state, player)),
+        lambda state: (
+            can_defeat_ShadowBeast(state, player)
+            or False # (
+            #     state.has("Shadow Crystal", player)
+            #     and state.has("Mirror Chamber Portal Item", player)
+            # )
+        ),
     )
 
     set_rule_if_exits(
@@ -3838,37 +3907,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance(
             "Castle Town North Behind First Door -> Castle Town North Inside Barrier"
         ),
-        lambda state: (
-            (state._tp_castle_requirements(player) == CastleRequirements.option_open)
-            or (
-                (
-                    state._tp_castle_requirements(player)
-                    == CastleRequirements.option_vanilla
-                )
-                and can_complete_palace_of_twilight(state, player)
-            )
-            or (
-                (
-                    state._tp_castle_requirements(player)
-                    == CastleRequirements.option_fused_shadows
-                )
-                and state.has("Progressive Fused Shadow", player, 3)
-            )
-            or (
-                (
-                    state._tp_castle_requirements(player)
-                    == CastleRequirements.option_mirror_shards
-                )
-                and state.has("Progressive Mirror Shard", player, 4)
-            )
-            or (
-                (
-                    state._tp_castle_requirements(player)
-                    == CastleRequirements.option_all_dungeons
-                )
-                and can_complete_all_dungeons(state, player)
-            )
-        ),
+        lambda state: (can_break_hc_barrier(state, player)),
     )
 
     set_rule_if_exits(
@@ -3964,14 +4003,22 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance(
             "Castle Town Doctors Office Entrance -> Castle Town Doctors Office Lower"
         ),
-        lambda state: (state.has("Invoice", player)),
+        lambda state: (
+            state.has("Invoice", player)
+            or False # Setting Ilia Quest == Statue
+            or False # Setting Ilia Quest == Charm
+        ),
     )
 
     set_rule_if_exits(
         world.get_entrance(
             "Castle Town Doctors Office Lower -> Castle Town Doctors Office Entrance"
         ),
-        lambda state: (state.has("Invoice", player)),
+        lambda state: (
+            state.has("Invoice", player)
+            or False # Setting Ilia Quest == Statue
+            or False # Setting Ilia Quest == Charm
+        ),
     )
 
     set_rule_if_exits(
@@ -4086,7 +4133,9 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Lanayru Field -> North Eldin Field"),
-        lambda state: (True),
+        lambda state: (
+            True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -4096,17 +4145,26 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Lanayru Field -> Lanayru Field Chu Grotto"),
-        lambda state: (state.has("Shadow Crystal", player)),
+        lambda state: (
+            state.has("Shadow Crystal", player)
+            and True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
         world.get_entrance("Lanayru Field -> Lanayru Field Skulltula Grotto"),
-        lambda state: (state.has("Shadow Crystal", player)),
+        lambda state: (
+            state.has("Shadow Crystal", player)
+            and True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
         world.get_entrance("Lanayru Field -> Lanayru Field Poe Grotto"),
-        lambda state: (state.has("Shadow Crystal", player)),
+        lambda state: (
+            state.has("Shadow Crystal", player)
+            and True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -4228,7 +4286,10 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance(
             "Outside Castle Town South -> Outside Castle Town South Tektite Grotto"
         ),
-        lambda state: (state.has("Shadow Crystal", player)),
+        lambda state: (
+            state.has("Shadow Crystal", player)
+            and True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -4271,22 +4332,14 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance("Lake Hylia Bridge -> Faron Field"),
         lambda state: (
             state.has("Gate Keys", player)
-            # Holdover from Keysy
-            # or (
-            #     state._tp_small_key_settings(player)
-            #     == SmallKeySettings.option_keysy
-            # )
+            and True # can_complete_lanayru_twilight(state, player)
         ),
         lambda state: (
             (
                 state.has("Gate Keys", player)
-                # Holdover from Keysy
-                # or (
-                #     state._tp_small_key_settings(player)
-                #     == SmallKeySettings.option_keysy
-                # )
+                or state.has("Shadow Crystal", player)
             )
-            or state.has("Shadow Crystal", player)
+            and True # can_complete_lanayru_twilight(state, player)
         ),
     )
 
@@ -4316,7 +4369,10 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Lake Hylia -> Lake Hylia Cave Entrance"),
-        lambda state: (can_smash(state, player)),
+        lambda state: (
+            can_smash(state, player)
+            and True # can_warp_meteor(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -4338,7 +4394,10 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Lake Hylia -> Gerudo Desert"),
-        lambda state: (state.has("Auru's Memo", player)),
+        lambda state: (
+            state.has("Auru's Memo", player)
+            and True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -4348,12 +4407,17 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Lake Hylia -> Lake Hylia Lanayru Spring"),
-        lambda state: (True),
+        lambda state: (
+            True # can_warp_meteor(state, player)
+        ),
     )
 
     set_rule_if_exits(
         world.get_entrance("Lake Hylia Flight By Fowl -> Lake Hylia Shell Blade Grotto"),
-        lambda state: (state.has("Shadow Crystal", player)),
+        lambda state: (
+            state.has("Shadow Crystal", player)
+            and True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -4372,7 +4436,10 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Lake Hylia -> Lake Hylia Water Toadpoli Grotto"),
-        lambda state: (state.has("Shadow Crystal", player)),
+        lambda state: (
+            state.has("Shadow Crystal", player)
+            and True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -4383,6 +4450,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
                 or (state._tp_skip_city_in_the_sky_entrance(player))
             )
             and state.has("Progressive Clawshot", player, 1)
+            and True # can_complete_lanayru_twilight(state, player)
         ),
     )
 
@@ -4451,7 +4519,13 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Upper Zoras River -> Fishing Hole"),
-        lambda state: (True),
+        lambda state: (
+            (
+                state.can_reach_region("Zoras Domain Throne Room", player)
+                and True # can_complete_eldin_twilight(state, player)
+            )
+            or True # can_complete_lanayru_twilight(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -4462,11 +4536,15 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Upper Zoras River -> Upper Zoras River Izas House"),
         lambda state: (
-            has_sword(state, player)
-            or (
-                can_defeat_ShadowBeast(state, player)
-                and (state._tp_transform_anywhere(player))
+            (
+                has_sword(state, player)
+                or (
+                    can_defeat_ShadowBeast(state, player)
+                    and state._tp_transform_anywhere(player)
+                )
+                or False # state.has("Upper Zoras River Portal Item", player)
             )
+            and True # can_complete_lanayru_twilight(state, player)
         ),
     )
 
@@ -4740,31 +4818,25 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Ordon Spring -> Ordon Bridge"),
         lambda state: (
-            True
-            # (
-            #     state.can_reach_region("Outside Links House", player)
-            #     and has_sword(state, player)
-            #     and state.has("Slingshot", player)
-            # )
-            # or (state._tp_skip_prologue(player))
+            (
+                state.can_reach_region("Outside Links House", player)
+                and has_sword(state, player)
+                and state.has("Slingshot", player)
+            )
+            or True # can_complete_prologue(state, player)
         ),
+        lambda state: (True),
     )
 
     set_rule_if_exits(
         world.get_entrance("Ordon Bridge -> Ordon Spring"),
         lambda state: (
-            True
-            # (
-            #     state.can_reach_region("Outside Links House", player)
-            #     and has_sword(state, player)
-            #     and state.has("Slingshot", player)
-            # )
-            # or (state._tp_skip_prologue(player))
-        ),
-        lambda state: (
-            True
-            # (has_sword(state, player) and state.has("Slingshot", player))
-            # or (state._tp_skip_prologue(player))
+            (
+                state.can_reach_region("Outside Links House", player)
+                and has_sword(state, player)
+                and state.has("Slingshot", player)
+            )
+            or True # can_complete_prologue(state, player)
         ),
     )
 
@@ -4835,7 +4907,10 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Snowpeak Summit Upper -> Snowpeak Summit Lower"),
         lambda state: (
-            can_defeat_ShadowBeast(state, player)
+            (
+                False # state.has("Snowpeak Portal Item", player)
+                or can_defeat_ShadowBeast(state, player)
+            )
             and (
                 (
                     (not state._tp_bonks_do_damage(player))
