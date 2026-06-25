@@ -228,7 +228,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
             "City in The Sky Lobby -> City in The Sky Central Tower Second Floor"
         ),
         lambda state: (
-            state.can_reach_region("City in the Sky Central Tower Second Floor", player)
+            state.can_reach_region("City in The Sky Central Tower Second Floor", player)
             and state.has("Progressive Clawshot", player, 1)
             and state.has("Iron Boots", player)
         ),
