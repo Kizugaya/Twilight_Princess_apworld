@@ -683,74 +683,88 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Hyrule Castle Inside East Wing -> Hyrule Castle Main Hall"),
-        lambda state: (True),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance(
-            "Hyrule Castle Inside East Wing -> Hyrule Castle Third Floor Balcony"
+        world.get_entrance("Hyrule Castle Main Hall -> Hyrule Castle Above Lantern Staircase"),
+        lambda state: (
+            can_defeat_bokoblin(state, player)
+            and can_defeat_lizalfos(state, player)
+            and state.has("Progressive Clawshot", player, 2)
+            and can_defeat_darknut(state, player)
+            and boomerang
         ),
         lambda state: (
-            state.has("Lantern", player) and can_defeat_Dinalfos(state, player)
+            can_defeat_bokoblin(state, player)
+            and can_defeat_lizalfos(state, player)
+            and state.has("Progressive Clawshot", player, 1)
+            and can_defeat_darknut(state, player)
+            and boomerang
         ),
     )
 
     set_rule_if_exits(
-        world.get_entrance("Hyrule Castle Inside West Wing -> Hyrule Castle Main Hall"),
-        lambda state: (True),
+        world.get_entrance("Hyrule Castle Main Hall -> Hyrule Castle After Double Dinalfos"),
+        lambda state: (
+            can_defeat_bokoblin(state, player)
+            and can_defeat_lizalfos(state, player)
+            and False # Setting HC Shortcut
+            and state.has("Progressive Clawshot", player, 2)
+        ),
     )
 
     set_rule_if_exits(
-        world.get_entrance(
-            "Hyrule Castle Inside West Wing -> Hyrule Castle Third Floor Balcony"
+        world.get_entrance("Hyrule Castle Above Lantern Staircase -> Hyrule Castle Main Hall"),
+        lambda state: (can_defeat_darknut(state, player)),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Hyrule Castle Above Lantern Staircase -> Hyrule Castle After Double Dinalfos"),
+        lambda state: (
+            state.has("Lantern", player)
+            and can_defeat_dinalfos(state, player)
         ),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Hyrule Castle Above Lantern Staircase -> Hyrule Castle After Double Darknuts"),
         lambda state: (
             can_knock_down_hc_painting(state, player)
-            and can_defeat_Lizalfos(state, player)
-            and can_defeat_Darknut(state, player)
+            and can_defeat_lizalfos(state, player)
+            and can_defeat_darknut(state, player)
         ),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Hyrule Castle After Double Dinalfos -> Hyrule Castle Main Hall"),
+        lambda state: (True),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Hyrule Castle After Double Dinalfos -> Hyrule Castle Above Lantern Staircase"),
+        lambda state: (True),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Hyrule Castle After Double Dinalfos -> Hyrule Castle Third Floor Balcony"),
+        lambda state: (True),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Hyrule Castle After Double Darknuts -> Hyrule Castle Main Hall"),
+        lambda state: (True),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Hyrule Castle After Double Darknuts -> Hyrule Castle Above Lantern Staircase"),
+        lambda state: (True),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Hyrule Castle After Double Darknuts -> Hyrule Castle Third Floor Balcony"),
+        lambda state: (True),
     )
 
     set_rule_if_exits(
         world.get_entrance("Hyrule Castle Main Hall -> Hyrule Castle Entrance"),
         lambda state: (True),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance("Hyrule Castle Main Hall -> Hyrule Castle Inside East Wing"),
-        lambda state: (
-            can_defeat_Bokoblin(state, player)
-            and can_defeat_Lizalfos(state, player)
-            and state.has("Progressive Clawshot", player, 2)
-            and can_defeat_Darknut(state, player)
-            and state.has("Gale Boomerang", player)
-        ),
-        lambda state: (
-            can_defeat_Bokoblin(state, player)
-            and can_defeat_Lizalfos(state, player)
-            and state.has("Progressive Clawshot", player)
-            and can_defeat_Darknut(state, player)
-            and state.has("Gale Boomerang", player)
-        ),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance("Hyrule Castle Main Hall -> Hyrule Castle Inside West Wing"),
-        lambda state: (
-            can_defeat_Bokoblin(state, player)
-            and can_defeat_Lizalfos(state, player)
-            and state.has("Progressive Clawshot", player, 2)
-            and can_defeat_Darknut(state, player)
-            and state.has("Gale Boomerang", player)
-        ),
-        lambda state: (
-            can_defeat_Bokoblin(state, player)
-            and can_defeat_Lizalfos(state, player)
-            and state.has("Progressive Clawshot", player)
-            and can_defeat_Darknut(state, player)
-            and state.has("Gale Boomerang", player)
-        ),
     )
 
     set_rule_if_exits(
@@ -772,26 +786,6 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance(
-            "Hyrule Castle Third Floor Balcony -> Hyrule Castle Inside West Wing"
-        ),
-        lambda state: (
-            can_defeat_Darknut(state, player)
-            and can_defeat_Lizalfos(state, player)
-            and can_knock_down_hc_painting(state, player)
-        ),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance(
-            "Hyrule Castle Third Floor Balcony -> Hyrule Castle Inside East Wing"
-        ),
-        lambda state: (
-            state.has("Lantern", player) and can_defeat_Dinalfos(state, player)
-        ),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance(
             "Hyrule Castle Third Floor Balcony -> Hyrule Castle Tower Climb"
         ),
         lambda state: (
@@ -803,6 +797,30 @@ def set_region_access_rules(world: "TPWorld", player: int):
                 #     == SmallKeySettings.option_keysy
                 # )
             )
+        ),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance(
+            "Hyrule Castle Third Floor Balcony -> Hyrule Castle After Double Dinalfos"
+        ),
+        lambda state: (
+            (
+                state.has("Lantern", player)
+                and can_defeat_dinalfos(state, player)
+            )
+            or False # Setting HC Shortcut
+        ),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance(
+            "Hyrule Castle Third Floor Balcony -> Hyrule Castle After Double Darknuts"
+        ),
+        lambda state: (
+            can_defeat_darknut(state, player)
+            and can_defeat_lizalfos(state, player)
+            and can_knock_down_hc_painting(state, player)
         ),
     )
 
@@ -1007,13 +1025,17 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Lakebed Temple Entrance -> Lakebed Temple Central Room"),
-        lambda state: (can_launch_bombs(state, player)),
         lambda state: (
-            can_do_air_refill(state, player)
+            state.has("Zora Armor", player)
+            and can_launch_bombs(state, player)),
+        lambda state: (
+            (
+                state.has("Zora Armor", player)
+                or can_do_air_refill(state, player)
+            )
             and (
                 can_launch_bombs(state, player)
-                or can_do_lja(state, player)
-                or can_do_js_moon_boots(state, player)
+                or can_step_clip(state, player)
             )
         ),
     )
@@ -2167,7 +2189,6 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance("Hidden Village -> Hidden Village Impaz House"),
         lambda state: (
             state.has("Progressive Hero's Bow", player, 1)
-            and state.has("Progressive Dominion Rod", player, 1)
         ),
     )
 
@@ -2859,16 +2880,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("South Faron Woods Behind Gate -> South Faron Woods"),
-        lambda state: (
-            state.can_reach_region("South Faron Woods", player)
-            or state.has("Shadow Crystal", player)
-            or can_clear_forest(state, player)
-        ),
-        lambda state: (
-            state.can_reach_region("South Faron Woods", player)
-            or state.has("Shadow Crystal", player)
-            or can_clear_forest_glitched(state, player)
-        ),
+        lambda state: (True),
     )
 
     set_rule_if_exits(
@@ -3161,19 +3173,6 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Faron Field -> Faron Field Behind Boulder"),
-        lambda state: (
-            can_get_hot_spring_water(state, player)
-            and state.can_reach_region("Outside Castle Town South", player)
-        ),
-        lambda state: (
-            state.can_reach_region("Castle Town South", player)
-            and has_bottle(state, player)
-            and state.can_reach_region("Outside Castle Town South", player)
-        ),
-    )
-
-    set_rule_if_exits(
         world.get_entrance("Faron Field -> South Faron Woods"),
         lambda state: (True),
     )
@@ -3212,21 +3211,6 @@ def set_region_access_rules(world: "TPWorld", player: int):
     set_rule_if_exits(
         world.get_entrance("Faron Field -> Faron Field Fishing Grotto"),
         lambda state: (state.has("Shadow Crystal", player)),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance("Faron Field Behind Boulder -> Faron Field"),
-        lambda state: (
-            can_get_hot_spring_water(state, player)
-            and state.can_reach_region("Outside Castle Town South", player)
-        ),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance(
-            "Faron Field Behind Boulder -> Outside Castle Town South Inside Boulder"
-        ),
-        lambda state: (True),
     )
 
     set_rule_if_exits(
@@ -3328,15 +3312,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Sacred Grove Upper -> Sacred Grove Past"),
-        lambda state: (
-            (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or (state._tp_tot_entrance(player) == TotEntrance.option_open_grove)
-            or (
-                state.can_reach_region("Sacred Grove Lower", player)
-                and state.has("Progressive Master Sword", player, 3)
-                and can_defeat_ShadowBeast(state, player)
-            )
-        ),
+        lambda state: (can_strike_pedestal(state, player)),
     )
 
     set_rule_if_exits(
@@ -3361,10 +3337,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Sacred Grove Past -> Sacred Grove Past Behind Window"),
-        lambda state: (
-            (state._tp_tot_entrance(player) == TotEntrance.option_open)
-            or state.has("Progressive Master Sword", player, 3)
-        ),
+        lambda state: (can_strike_pedestal(state, player)),
     )
 
     set_rule_if_exits(
@@ -3682,7 +3655,10 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Mirror Chamber Lower -> Arbiters Grounds Boss Room"),
-        lambda state: (True),
+        lambda state: (
+            state.can_reach_region("Kakariko Malo Mart", player)
+            and can_defeat_Stallord(state, player)
+        ),
     )
 
     set_rule_if_exits(
@@ -3696,7 +3672,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Mirror Chamber Upper -> Mirror of Twilight"),
+        world.get_entrance("Mirror Chamber Upper -> Mirror Chamber Portal"),
         lambda state: (
             can_defeat_ShadowBeast(state, player)
             and (
@@ -3730,12 +3706,12 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Mirror of Twilight -> Mirror Chamber Upper"),
+        world.get_entrance("Mirror Chamber Portal -> Mirror Chamber Upper"),
         lambda state: (can_defeat_ShadowBeast(state, player)),
     )
 
     set_rule_if_exits(
-        world.get_entrance("Mirror of Twilight -> Palace of Twilight Entrance"),
+        world.get_entrance("Mirror Chamber Portal -> Palace of Twilight Entrance"),
         lambda state: (True),
     )
 
@@ -4234,26 +4210,6 @@ def set_region_access_rules(world: "TPWorld", player: int):
         world.get_entrance("Outside Castle Town South -> Castle Town South"),
         lambda state: (True),
     )
-
-    set_rule_if_exits(
-        world.get_entrance(
-            "Outside Castle Town South Inside Boulder -> Faron Field Behind Boulder"
-        ),
-        lambda state: (can_get_hot_spring_water(state, player)),
-        lambda state: (
-            state.can_reach_region("Kakariko Malo Mart", player)
-            and state.can_reach_region("Lower Kakariko Village", player)
-            and state.can_reach_region("Castle Town South", player)
-            and has_bottle(state, player)
-        ),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance(
-            "Outside Castle Town South -> Outside Castle Town South Inside Boulder"
-        ),
-        lambda state: (True),
-    )
     set_rule_if_exits(
         world.get_entrance("Outside Castle Town South -> Lake Hylia"),
         lambda state: (True),
@@ -4264,23 +4220,6 @@ def set_region_access_rules(world: "TPWorld", player: int):
             "Outside Castle Town South -> Outside Castle Town South Tektite Grotto"
         ),
         lambda state: (state.has("Shadow Crystal", player)),
-    )
-
-    set_rule_if_exits(
-        world.get_entrance(
-            "Outside Castle Town South Inside Boulder -> Outside Castle Town South"
-        ),
-        lambda state: (
-            can_get_hot_spring_water(state, player)
-            and state.can_reach_region("Outside Castle Town South", player)
-        ),
-        lambda state: (
-            state.can_reach_region("Kakariko Malo Mart", player)
-            and state.can_reach_region("Lower Kakariko Village", player)
-            and state.can_reach_region("Castle Town South", player)
-            and has_bottle(state, player)
-            and state.can_reach_region("Outside Castle Town South", player)
-        ),
     )
 
     set_rule_if_exits(
@@ -4399,7 +4338,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Lake Hylia -> Lake Hylia Shell Blade Grotto"),
+        world.get_entrance("Lake Hylia Flight By Fowl -> Lake Hylia Shell Blade Grotto"),
         lambda state: (state.has("Shadow Crystal", player)),
     )
 
@@ -4461,7 +4400,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Lake Hylia Shell Blade Grotto -> Lake Hylia"),
+        world.get_entrance("Lake Hylia Shell Blade Grotto -> Lake Hylia Flight By Fowl"),
         lambda state: (True),
     )
 
@@ -4596,7 +4535,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Ordon Village -> Ordon Shield House"),
+        world.get_entrance("Ordon Village -> Ordon Shield House Lower"),
         lambda state: (can_change_time(state, player)),
     )
 
@@ -4621,8 +4560,23 @@ def set_region_access_rules(world: "TPWorld", player: int):
     )
 
     set_rule_if_exits(
-        world.get_entrance("Ordon Shield House -> Ordon Village"),
+        world.get_entrance("Ordon Shield House Lower -> Ordon Village"),
         lambda state: (True),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Ordon Shield House Lower -> Ordon Shield House Upper"),
+        lambda state: (state.has("Shadow Crystal", player)),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Ordon Shield House Upper -> Ordon Shield House Lower"),
+        lambda state: (True),
+    )
+
+    set_rule_if_exits(
+        world.get_entrance("Ordon Shield House Upper -> Ordon Village"),
+        lambda state: (state.has("Shadow Crystal", player)),
     )
 
     set_rule_if_exits(
@@ -4767,26 +4721,7 @@ def set_region_access_rules(world: "TPWorld", player: int):
 
     set_rule_if_exits(
         world.get_entrance("Snowpeak Climb Upper -> Snowpeak Climb Lower"),
-        lambda state: (
-            (
-                (state._tp_skip_snowpeak_entrance(player))
-                or (
-                    state.can_reach_region("Zoras Domain", player)
-                    and state.has("Progressive Fishing Rod", player, 2)
-                )
-            )
-            and state.has("Shadow Crystal", player)
-        ),
-        lambda state: (
-            (
-                (state._tp_skip_snowpeak_entrance(player))
-                or (
-                    state.can_reach_region("Zoras Domain", player)
-                    and state.has("Progressive Fishing Rod", player, 2)
-                )
-            )
-            or state.has("Shadow Crystal", player)
-        ),
+        lambda state: (True),
     )
 
     set_rule_if_exits(
@@ -4819,17 +4754,20 @@ def set_region_access_rules(world: "TPWorld", player: int):
         lambda state: (
             can_defeat_ShadowBeast(state, player)
             and (
-                (not state._tp_bonks_do_damage(player))
-                or (
-                    (state._tp_bonks_do_damage(player))
-                    and (
-                        (
-                            state._tp_damage_magnification(player)
-                            != DamageMagnification.option_ohko
+                (
+                    (not state._tp_bonks_do_damage(player))
+                    or (
+                        (state._tp_bonks_do_damage(player))
+                        and (
+                            (
+                                state._tp_damage_magnification(player)
+                                != DamageMagnification.option_ohko
+                            )
+                            or can_use_bottled_fairy(state, player)
                         )
-                        or can_use_bottled_fairy(state, player)
                     )
                 )
+                or can_complete_snowpeak_ruins(state, player)
             )
         ),
     )
