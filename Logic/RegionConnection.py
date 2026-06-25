@@ -282,6 +282,51 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         "Ganondorf Castle -> Hyrule Castle Tower Climb",
     )
 
+    multiworld.get_region("Hyrule Castle Above Lantern Staircase", player).connect(
+        multiworld.get_region("Hyrule Castle Main Hall", player),
+        "Hyrule Castle Above Lantern Staircase -> Hyrule Castle Main Hall",
+    )
+
+    multiworld.get_region("Hyrule Castle Above Lantern Staircase", player).connect(
+        multiworld.get_region("Hyrule Castle After Double Dinalfos", player),
+        "Hyrule Castle Above Lantern Staircase -> Hyrule Castle After Double Dinalfos",
+    )
+
+    multiworld.get_region("Hyrule Castle Above Lantern Staircase", player).connect(
+        multiworld.get_region("Hyrule Castle After Double Darknuts", player),
+        "Hyrule Castle Above Lantern Staircase -> Hyrule Castle After Double Darknuts",
+    )
+
+    multiworld.get_region("Hyrule Castle After Double Dinalfos", player).connect(
+        multiworld.get_region("Hyrule Castle Above Lantern Staircase", player),
+        "Hyrule Castle After Double Dinalfos -> Hyrule Castle Above Lantern Staircase",
+    )
+
+    multiworld.get_region("Hyrule Castle After Double Dinalfos", player).connect(
+        multiworld.get_region("Hyrule Castle Main Hall", player),
+        "Hyrule Castle After Double Dinalfos -> Hyrule Castle Main Hall",
+    )
+
+    multiworld.get_region("Hyrule Castle After Double Dinalfos", player).connect(
+        multiworld.get_region("Hyrule Castle Third Floor Balcony", player),
+        "Hyrule Castle After Double Dinalfos -> Hyrule Castle Third Floor Balcony",
+    )
+
+    multiworld.get_region("Hyrule Castle After Double Darknuts", player).connect(
+        multiworld.get_region("Hyrule Castle Above Lantern Staircase", player),
+        "Hyrule Castle After Double Darknuts -> Hyrule Castle Above Lantern Staircase",
+    )
+
+    multiworld.get_region("Hyrule Castle After Double Darknuts", player).connect(
+        multiworld.get_region("Hyrule Castle Main Hall", player),
+        "Hyrule Castle After Double Darknuts -> Hyrule Castle Main Hall",
+    )
+
+    multiworld.get_region("Hyrule Castle After Double Darknuts", player).connect(
+        multiworld.get_region("Hyrule Castle Third Floor Balcony", player),
+        "Hyrule Castle After Double Darknuts -> Hyrule Castle Third Floor Balcony",
+    )
+
     multiworld.get_region("Hyrule Castle Entrance", player).connect(
         multiworld.get_region("Castle Town North Inside Barrier", player),
         "Hyrule Castle Entrance -> Castle Town North Inside Barrier",
@@ -307,39 +352,14 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         "Hyrule Castle Graveyard -> Hyrule Castle Outside East Wing",
     )
 
-    multiworld.get_region("Hyrule Castle Inside East Wing", player).connect(
-        multiworld.get_region("Hyrule Castle Main Hall", player),
-        "Hyrule Castle Inside East Wing -> Hyrule Castle Main Hall",
-    )
-
-    multiworld.get_region("Hyrule Castle Inside East Wing", player).connect(
-        multiworld.get_region("Hyrule Castle Third Floor Balcony", player),
-        "Hyrule Castle Inside East Wing -> Hyrule Castle Third Floor Balcony",
-    )
-
-    multiworld.get_region("Hyrule Castle Inside West Wing", player).connect(
-        multiworld.get_region("Hyrule Castle Main Hall", player),
-        "Hyrule Castle Inside West Wing -> Hyrule Castle Main Hall",
-    )
-
-    multiworld.get_region("Hyrule Castle Inside West Wing", player).connect(
-        multiworld.get_region("Hyrule Castle Third Floor Balcony", player),
-        "Hyrule Castle Inside West Wing -> Hyrule Castle Third Floor Balcony",
+    multiworld.get_region("Hyrule Castle Main Hall", player).connect(
+        multiworld.get_region("Hyrule Castle Above Lantern Staircase", player),
+        "Hyrule Castle Main Hall -> Hyrule Castle Above Lantern Staircase",
     )
 
     multiworld.get_region("Hyrule Castle Main Hall", player).connect(
         multiworld.get_region("Hyrule Castle Entrance", player),
         "Hyrule Castle Main Hall -> Hyrule Castle Entrance",
-    )
-
-    multiworld.get_region("Hyrule Castle Main Hall", player).connect(
-        multiworld.get_region("Hyrule Castle Inside East Wing", player),
-        "Hyrule Castle Main Hall -> Hyrule Castle Inside East Wing",
-    )
-
-    multiworld.get_region("Hyrule Castle Main Hall", player).connect(
-        multiworld.get_region("Hyrule Castle Inside West Wing", player),
-        "Hyrule Castle Main Hall -> Hyrule Castle Inside West Wing",
     )
 
     multiworld.get_region("Hyrule Castle Outside East Wing", player).connect(
@@ -355,16 +375,6 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Hyrule Castle Outside West Wing", player).connect(
         multiworld.get_region("Hyrule Castle Entrance", player),
         "Hyrule Castle Outside West Wing -> Hyrule Castle Entrance",
-    )
-
-    multiworld.get_region("Hyrule Castle Third Floor Balcony", player).connect(
-        multiworld.get_region("Hyrule Castle Inside West Wing", player),
-        "Hyrule Castle Third Floor Balcony -> Hyrule Castle Inside West Wing",
-    )
-
-    multiworld.get_region("Hyrule Castle Third Floor Balcony", player).connect(
-        multiworld.get_region("Hyrule Castle Inside East Wing", player),
-        "Hyrule Castle Third Floor Balcony -> Hyrule Castle Inside East Wing",
     )
 
     multiworld.get_region("Hyrule Castle Third Floor Balcony", player).connect(
@@ -523,8 +533,18 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Snowpeak Ruins Left Door", player).connect(
+        multiworld.get_region("Snowpeak Summit Lower Left Door", player),
+        "Snowpeak Ruins Left Door -> Snowpeak Summit Lower Left Door",
+    )
+
+    multiworld.get_region("Snowpeak Summit Lower Left Door", player).connect(
+        multiworld.get_region("Snowpeak Ruins Left Door", player),
+        "Snowpeak Summit Lower Left Door -> Snowpeak Ruins Left Door",
+    )
+
+    multiworld.get_region("Snowpeak Summit Lower Left Door", player).connect(
         multiworld.get_region("Snowpeak Summit Lower", player),
-        "Snowpeak Ruins Left Door -> Snowpeak Summit Lower",
+        "Snowpeak Summit Lower Left Door -> Snowpeak Summit Lower",
     )
 
     multiworld.get_region("Snowpeak Ruins Right Door", player).connect(
@@ -533,8 +553,18 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Snowpeak Ruins Right Door", player).connect(
+        multiworld.get_region("Snowpeak Summit Lower Right Door", player),
+        "Snowpeak Ruins Right Door -> Snowpeak Summit Lower Right Door",
+    )
+
+    multiworld.get_region("Snowpeak Summit Lower Right Door", player).connect(
+        multiworld.get_region("Snowpeak Ruins Right Door", player),
+        "Snowpeak Summit Lower Right Door -> Snowpeak Ruins Right Door",
+    )
+
+    multiworld.get_region("Snowpeak Summit Lower Right Door", player).connect(
         multiworld.get_region("Snowpeak Summit Lower", player),
-        "Snowpeak Ruins Right Door -> Snowpeak Summit Lower",
+        "Snowpeak Summit Lower Right Door -> Snowpeak Summit Lower",
     )
 
     multiworld.get_region("Snowpeak Ruins Boss Room", player).connect(
@@ -566,10 +596,7 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         multiworld.get_region("Snowpeak Ruins Chapel", player),
         "Snowpeak Ruins Caged Freezard Room -> Snowpeak Ruins Chapel",
     )
-    multiworld.get_region("Snowpeak Ruins Caged Freezard Room", player).connect(
-        multiworld.get_region("Snowpeak Ruins Boss Room", player),
-        "Snowpeak Ruins Caged Freezard Room -> Snowpeak Ruins Boss Room",
-    )
+
     multiworld.get_region("Snowpeak Ruins Caged Freezard Room", player).connect(
         multiworld.get_region("Snowpeak Ruins Caged Freezard Room Lower", player),
         "Snowpeak Ruins Caged Freezard Room -> Snowpeak Ruins Caged Freezard Room Lower",
@@ -588,6 +615,11 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Snowpeak Ruins Chapel", player).connect(
         multiworld.get_region("Snowpeak Ruins West Courtyard", player),
         "Snowpeak Ruins Chapel -> Snowpeak Ruins West Courtyard",
+    )
+
+    multiworld.get_region("Snowpeak Ruins Chapel", player).connect(
+        multiworld.get_region("Snowpeak Ruins Boss Room", player),
+        "Snowpeak Ruins Chapel -> Snowpeak Ruins Boss Room",
     )
 
     multiworld.get_region("Snowpeak Ruins Darkhammer Room", player).connect(
@@ -686,13 +718,6 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region(
         "Snowpeak Ruins Second Floor Mini Freezard Room", player
     ).connect(
-        multiworld.get_region("Snowpeak Ruins East Courtyard", player),
-        "Snowpeak Ruins Second Floor Mini Freezard Room -> Snowpeak Ruins East Courtyard",
-    )
-
-    multiworld.get_region(
-        "Snowpeak Ruins Second Floor Mini Freezard Room", player
-    ).connect(
         multiworld.get_region(
             "Snowpeak Ruins Northeast Chilfos Room Second Floor", player
         ),
@@ -739,11 +764,6 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Snowpeak Ruins West Courtyard", player).connect(
         multiworld.get_region("Snowpeak Ruins Darkhammer Room", player),
         "Snowpeak Ruins West Courtyard -> Snowpeak Ruins Darkhammer Room",
-    )
-
-    multiworld.get_region("Snowpeak Ruins West Courtyard", player).connect(
-        multiworld.get_region("Snowpeak Ruins Boss Room", player),
-        "Snowpeak Ruins West Courtyard -> Snowpeak Ruins Boss Room",
     )
 
     multiworld.get_region("Snowpeak Ruins Wooden Beam Room", player).connect(
@@ -876,6 +896,16 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         "Temple of Time Upper Spike Trap Corridor -> Temple of Time Darknut Arena",
     )
 
+    multiworld.get_region("Death Mountain Hot Spring", player).connect(
+        multiworld.get_region("Death Mountain Elevator Lower", player),
+        "Death Mountain Hot Spring -> Death Mountain Elevator Lower",
+    )
+
+    multiworld.get_region("Death Mountain Hot Spring", player).connect(
+        multiworld.get_region("Death Mountain Volcano", player),
+        "Death Mountain Hot Spring -> Death Mountain Volcano",
+    )
+
     multiworld.get_region("Death Mountain Near Kakariko", player).connect(
         multiworld.get_region("Lower Kakariko Village", player),
         "Death Mountain Near Kakariko -> Lower Kakariko Village",
@@ -894,6 +924,11 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Death Mountain Trail", player).connect(
         multiworld.get_region("Death Mountain Volcano", player),
         "Death Mountain Trail -> Death Mountain Volcano",
+    )
+
+    multiworld.get_region("Death Mountain Volcano", player).connect(
+        multiworld.get_region("Death Mountain Hot Spring", player),
+        "Death Mountain Volcano -> Death Mountain Hot Spring",
     )
 
     multiworld.get_region("Death Mountain Volcano", player).connect(
@@ -919,6 +954,11 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Death Mountain Outside Sumo Hall", player).connect(
         multiworld.get_region("Death Mountain Sumo Hall", player),
         "Death Mountain Outside Sumo Hall -> Death Mountain Sumo Hall",
+    )
+
+    multiworld.get_region("Death Mountain Elevator Lower", player).connect(
+        multiworld.get_region("Death Mountain Hot Spring", player),
+        "Death Mountain Elevator Lower -> Death Mountain Hot Spring",
     )
 
     multiworld.get_region("Death Mountain Elevator Lower", player).connect(
@@ -1705,8 +1745,18 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Mist Area Near North Faron Woods", player).connect(
+        multiworld.get_region("Mist Area Near North Faron Woods Behind Gate", player),
+        "Mist Area Near North Faron Woods -> Mist Area Near North Faron Woods Behind Gate",
+    )
+
+    multiworld.get_region("Mist Area Near North Faron Woods Behind Gate", player).connect(
+        multiworld.get_region("Mist Area Near North Faron Woods", player),
+        "Mist Area Near North Faron Woods Behind Gate -> Mist Area Near North Faron Woods",
+    )
+
+    multiworld.get_region("Mist Area Near North Faron Woods Behind Gate", player).connect(
         multiworld.get_region("North Faron Woods", player),
-        "Mist Area Near North Faron Woods -> North Faron Woods",
+        "Mist Area Near North Faron Woods Behind Gate -> North Faron Woods",
     )
 
     multiworld.get_region("Faron Woods Cave Northern Entrance", player).connect(
@@ -1730,18 +1780,23 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("North Faron Woods", player).connect(
-        multiworld.get_region("Lost Woods", player),
-        "North Faron Woods -> Lost Woods",
-    )
-
-    multiworld.get_region("North Faron Woods", player).connect(
         multiworld.get_region("Forest Temple Entrance", player),
         "North Faron Woods -> Forest Temple Entrance",
     )
 
-    multiworld.get_region("Faron Field", player).connect(
-        multiworld.get_region("Faron Field Behind Boulder", player),
-        "Faron Field -> Faron Field Behind Boulder",
+    multiworld.get_region("North Faron Woods", player).connect(
+        multiworld.get_region("North Faron Lost Woods Entrance", player),
+        "North Faron Woods -> North Faron Lost Woods Entrance",
+    )
+
+    multiworld.get_region("North Faron Lost Woods Entrance", player).connect(
+        multiworld.get_region("North Faron Woods", player),
+        "North Faron Lost Woods Entrance -> North Faron Woods",
+    )
+
+    multiworld.get_region("North Faron Lost Woods Entrance", player).connect(
+        multiworld.get_region("Lost Woods", player),
+        "North Faron Lost Woods Entrance -> Lost Woods",
     )
 
     multiworld.get_region("Faron Field", player).connect(
@@ -1767,16 +1822,6 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Faron Field", player).connect(
         multiworld.get_region("Faron Field Fishing Grotto", player),
         "Faron Field -> Faron Field Fishing Grotto",
-    )
-
-    multiworld.get_region("Faron Field Behind Boulder", player).connect(
-        multiworld.get_region("Faron Field", player),
-        "Faron Field Behind Boulder -> Faron Field",
-    )
-
-    multiworld.get_region("Faron Field Behind Boulder", player).connect(
-        multiworld.get_region("Outside Castle Town South Inside Boulder", player),
-        "Faron Field Behind Boulder -> Outside Castle Town South Inside Boulder",
     )
 
     multiworld.get_region("Faron Field Corner Grotto", player).connect(
@@ -1904,11 +1949,6 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         "Gerudo Desert Cave of Ordeals Floors 32-41 -> Gerudo Desert Cave of Ordeals Floors 42-50",
     )
 
-    multiworld.get_region("Gerudo Desert Cave of Ordeals Floors 42-50", player).connect(
-        multiworld.get_region("Lake Hylia Lanayru Spring", player),
-        "Gerudo Desert Cave of Ordeals Floors 42-50 -> Lake Hylia Lanayru Spring",
-    )
-
     multiworld.get_region("Gerudo Desert", player).connect(
         multiworld.get_region("Gerudo Desert Cave of Ordeals Plateau", player),
         "Gerudo Desert -> Gerudo Desert Cave of Ordeals Plateau",
@@ -2025,18 +2065,18 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Mirror Chamber Upper", player).connect(
-        multiworld.get_region("Mirror of Twilight", player),
-        "Mirror Chamber Upper -> Mirror of Twilight",
+        multiworld.get_region("Mirror Chamber Portal", player),
+        "Mirror Chamber Upper -> Mirror Chamber Portal",
     )
 
-    multiworld.get_region("Mirror of Twilight", player).connect(
+    multiworld.get_region("Mirror Chamber Portal", player).connect(
         multiworld.get_region("Mirror Chamber Upper", player),
-        "Mirror of Twilight -> Mirror Chamber Upper",
+        "Mirror Chamber Portal -> Mirror Chamber Upper",
     )
 
-    multiworld.get_region("Mirror of Twilight", player).connect(
+    multiworld.get_region("Mirror Chamber Portal", player).connect(
         multiworld.get_region("Palace of Twilight Entrance", player),
-        "Mirror of Twilight -> Palace of Twilight Entrance",
+        "Mirror Chamber Portal -> Palace of Twilight Entrance",
     )
 
     multiworld.get_region("Castle Town West", player).connect(
@@ -2127,6 +2167,16 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Castle Town Goron House", player).connect(
         multiworld.get_region("Castle Town Goron House Right Door", player),
         "Castle Town Goron House -> Castle Town Goron House Right Door",
+    )
+
+    multiworld.get_region("Castle Town Goron House", player).connect(
+        multiworld.get_region("Castle Town Goron House Balcony", player),
+        "Castle Town Goron House -> Castle Town Goron House Balcony",
+    )
+
+    multiworld.get_region("Castle Town Goron House Balcony", player).connect(
+        multiworld.get_region("Castle Town Goron House", player),
+        "Castle Town Goron House Balcony -> Castle Town Goron House",
     )
 
     multiworld.get_region("Castle Town Malo Mart", player).connect(
@@ -2255,6 +2305,11 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Castle Town South", player).connect(
+        multiworld.get_region("South Castle Town Doors", player),
+        "Castle Town South -> South Castle Town Doors",
+    )
+
+    multiworld.get_region("Castle Town South", player).connect(
         multiworld.get_region("Castle Town West", player),
         "Castle Town South -> Castle Town West",
     )
@@ -2267,11 +2322,6 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Castle Town South", player).connect(
         multiworld.get_region("Castle Town East", player),
         "Castle Town South -> Castle Town East",
-    )
-
-    multiworld.get_region("Castle Town South", player).connect(
-        multiworld.get_region("Outside Castle Town South", player),
-        "Castle Town South -> Outside Castle Town South",
     )
 
     multiworld.get_region("Castle Town South", player).connect(
@@ -2292,6 +2342,16 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Castle Town South", player).connect(
         multiworld.get_region("Castle Town Telmas Bar", player),
         "Castle Town South -> Castle Town Telmas Bar",
+    )
+
+    multiworld.get_region("South Castle Town Doors", player).connect(
+        multiworld.get_region("Castle Town South", player),
+        "South Castle Town Doors -> Castle Town South",
+    )
+
+    multiworld.get_region("South Castle Town Doors", player).connect(
+        multiworld.get_region("Outside Castle Town South", player),
+        "South Castle Town Doors -> Outside Castle Town South",
     )
 
     multiworld.get_region("Castle Town Agithas House", player).connect(
@@ -2450,13 +2510,8 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Outside Castle Town South", player).connect(
-        multiworld.get_region("Castle Town South", player),
-        "Outside Castle Town South -> Castle Town South",
-    )
-
-    multiworld.get_region("Outside Castle Town South Inside Boulder", player).connect(
-        multiworld.get_region("Faron Field Behind Boulder", player),
-        "Outside Castle Town South Inside Boulder -> Faron Field Behind Boulder",
+        multiworld.get_region("South Castle Town Doors", player),
+        "Outside Castle Town South -> South Castle Town Doors",
     )
 
     multiworld.get_region("Outside Castle Town South", player).connect(
@@ -2469,19 +2524,19 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         "Outside Castle Town South -> Outside Castle Town South Tektite Grotto",
     )
 
-    multiworld.get_region("Outside Castle Town South Inside Boulder", player).connect(
-        multiworld.get_region("Outside Castle Town South", player),
-        "Outside Castle Town South Inside Boulder -> Outside Castle Town South",
-    )
-
     multiworld.get_region("Outside Castle Town South", player).connect(
-        multiworld.get_region("Outside Castle Town South Inside Boulder", player),
-        "Outside Castle Town South -> Outside Castle Town South Inside Boulder",
+        multiworld.get_region("Faron Field", player),
+        "Outside Castle Town South -> Faron Field",
     )
 
     multiworld.get_region("Outside Castle Town South Tektite Grotto", player).connect(
         multiworld.get_region("Outside Castle Town South", player),
         "Outside Castle Town South Tektite Grotto -> Outside Castle Town South",
+    )
+
+    multiworld.get_region("Lake Hylia Bridge", player).connect(
+        multiworld.get_region("Lake Hylia Flight By Fowl", player),
+        "Lake Hylia Bridge -> Lake Hylia Flight By Fowl",
     )
 
     multiworld.get_region("Lake Hylia Bridge", player).connect(
@@ -2497,11 +2552,6 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Lake Hylia Bridge", player).connect(
         multiworld.get_region("Outside Castle Town West", player),
         "Lake Hylia Bridge -> Outside Castle Town West",
-    )
-
-    multiworld.get_region("Lake Hylia Bridge", player).connect(
-        multiworld.get_region("Lake Hylia", player),
-        "Lake Hylia Bridge -> Lake Hylia",
     )
 
     multiworld.get_region("Lake Hylia Bridge", player).connect(
@@ -2525,6 +2575,11 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Lake Hylia", player).connect(
+        multiworld.get_region("Lake Hylia Flight By Fowl", player),
+        "Lake Hylia -> Lake Hylia Flight By Fowl",
+    )
+
+    multiworld.get_region("Lake Hylia", player).connect(
         multiworld.get_region("Lake Hylia Cave Entrance", player),
         "Lake Hylia -> Lake Hylia Cave Entrance",
     )
@@ -2532,11 +2587,6 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Lake Hylia", player).connect(
         multiworld.get_region("Lake Hylia Lakebed Temple Entrance", player),
         "Lake Hylia -> Lake Hylia Lakebed Temple Entrance",
-    )
-
-    multiworld.get_region("Lake Hylia", player).connect(
-        multiworld.get_region("Lake Hylia Bridge", player),
-        "Lake Hylia -> Lake Hylia Bridge",
     )
 
     multiworld.get_region("Lake Hylia", player).connect(
@@ -2567,6 +2617,16 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     multiworld.get_region("Lake Hylia", player).connect(
         multiworld.get_region("City in The Sky Entrance", player),
         "Lake Hylia -> City in The Sky Entrance",
+    )
+
+    multiworld.get_region("Lake Hylia Flight By Fowl", player).connect(
+        multiworld.get_region("Lake Hylia Bridge", player),
+        "Lake Hylia Flight By Fowl -> Lake Hylia Bridge",
+    )
+
+    multiworld.get_region("Lake Hylia", player).connect(
+        multiworld.get_region("Lake Hylia Bridge", player),
+        "Lake Hylia Flight By Fowl -> Lake Hylia",
     )
 
     multiworld.get_region("Lake Hylia Cave Entrance", player).connect(
@@ -2640,6 +2700,11 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Fishing Hole", player).connect(
+        multiworld.get_region("Fishing Hole Piece of Heart", player),
+        "Fishing Hole -> Fishing Hole Piece of Heart",
+    )
+
+    multiworld.get_region("Fishing Hole", player).connect(
         multiworld.get_region("Upper Zoras River", player),
         "Fishing Hole -> Upper Zoras River",
     )
@@ -2654,6 +2719,16 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         "Fishing Hole House -> Fishing Hole",
     )
 
+    multiworld.get_region("Fishing Hole House", player).connect(
+        multiworld.get_region("Fishing Hole Piece of Heart", player),
+        "Fishing Hole House -> Fishing Hole Piece of Heart",
+    )
+
+    multiworld.get_region("Zoras Domain", player).connect(
+        multiworld.get_region("Zoras Domain Top of Waterfall", player),
+        "Zoras Domain -> Zoras Domain Top of Waterfall",
+    )
+
     multiworld.get_region("Zoras Domain", player).connect(
         multiworld.get_region("Zoras Domain West Ledge", player),
         "Zoras Domain -> Zoras Domain West Ledge",
@@ -2665,13 +2740,8 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Zoras Domain", player).connect(
-        multiworld.get_region("Zoras Domain Throne Room", player),
-        "Zoras Domain -> Zoras Domain Throne Room",
-    )
-
-    multiworld.get_region("Zoras Domain", player).connect(
-        multiworld.get_region("Snowpeak Climb Lower", player),
-        "Zoras Domain -> Snowpeak Climb Lower",
+        multiworld.get_region("Zoras Domain Snowpeak Entrance", player),
+        "Zoras Domain -> Zoras Domain Snowpeak Entrance",
     )
 
     multiworld.get_region("Zoras Domain West Ledge", player).connect(
@@ -2684,9 +2754,34 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         "Zoras Domain West Ledge -> Lanayru Field Behind Boulder",
     )
 
+    multiworld.get_region("Zoras Domain West Ledge", player).connect(
+        multiworld.get_region("Zoras Domain Top of Waterfall", player),
+        "Zoras Domain West Ledge -> Zoras Domain Top of Waterfall",
+    )
+
     multiworld.get_region("Zoras Domain Throne Room", player).connect(
+        multiworld.get_region("Zoras Domain Top of Waterfall", player),
+        "Zoras Domain Throne Room -> Zoras Domain Top of Waterfall",
+    )
+
+    multiworld.get_region("Zoras Domain Top of Waterfall", player).connect(
         multiworld.get_region("Zoras Domain", player),
-        "Zoras Domain Throne Room -> Zoras Domain",
+        "Zoras Domain Top of Waterfall -> Zoras Domain",
+    )
+
+    multiworld.get_region("Zoras Domain Top of Waterfall", player).connect(
+        multiworld.get_region("Zoras Domain Throne Room", player),
+        "Zoras Domain Top of Waterfall -> Zoras Domain Throne Room",
+    )
+
+    multiworld.get_region("Zoras Domain Snowpeak Entrance", player).connect(
+        multiworld.get_region("Zoras Domain", player),
+        "Zoras Domain Snowpeak Entrance -> Zoras Domain",
+    )
+
+    multiworld.get_region("Zoras Domain Snowpeak Entrance", player).connect(
+        multiworld.get_region("Snowpeak Climb Lower", player),
+        "Zoras Domain Snowpeak Entrance -> Snowpeak Climb Lower",
     )
 
     multiworld.get_region("Outside Links House", player).connect(
@@ -2749,9 +2844,19 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
         "Ordon Seras Shop -> Ordon Village",
     )
 
-    multiworld.get_region("Ordon Shield House", player).connect(
+    multiworld.get_region("Ordon Shield House Lower", player).connect(
         multiworld.get_region("Ordon Village", player),
-        "Ordon Shield House -> Ordon Village",
+        "Ordon Shield House Lower -> Ordon Village",
+    )
+
+    multiworld.get_region("Ordon Shield House Upper", player).connect(
+        multiworld.get_region("Ordon Shield House Lower", player),
+        "Ordon Shield House Upper -> Ordon Shield House Lower",
+    )
+
+    multiworld.get_region("Ordon Shield House Upper", player).connect(
+        multiworld.get_region("Ordon Village", player),
+        "Ordon Shield House Upper -> Ordon Village",
     )
 
     multiworld.get_region("Ordon Sword House", player).connect(
@@ -2895,11 +3000,11 @@ def connect_regions(multiworld: MultiWorld, player: int) -> None:
     )
 
     multiworld.get_region("Snowpeak Summit Lower", player).connect(
-        multiworld.get_region("Snowpeak Ruins Left Door", player),
-        "Snowpeak Summit Lower -> Snowpeak Ruins Left Door",
+        multiworld.get_region("Snowpeak Summit Lower Left Door", player),
+        "Snowpeak Summit Lower -> Snowpeak Summit Lower Left Door",
     )
 
     multiworld.get_region("Snowpeak Summit Lower", player).connect(
-        multiworld.get_region("Snowpeak Ruins Right Door", player),
-        "Snowpeak Summit Lower -> Snowpeak Ruins Right Door",
+        multiworld.get_region("Snowpeak Summit Lower Right Door", player),
+        "Snowpeak Summit Lower -> Snowpeak Summit Lower Right Door",
     )
