@@ -6466,3 +6466,53 @@ LOCATION_TO_REGION: dict[str, str] = {
     "City in The Sky Argorok": "City in The Sky Boss Room",
     "Arbiters Grounds Stallord": "Arbiters Grounds Boss Room",
 }
+
+flags_to_groups = {
+    "Arbiters Grounds": TPFlag.Arbiters_Grounds,
+    "City in The Sky": TPFlag.City_in_The_Sky,
+    "Forest Temple": TPFlag.Forest_Temple,
+    "Goron Mines": TPFlag.Goron_Mines,
+    "Hyrule Castle": TPFlag.Hyrule_Castle,
+    "Lakebed Temple": TPFlag.Lakebed_Temple,
+    "Palace of Twilight": TPFlag.Palace_of_Twilight,
+    "Snowpeak Ruins": TPFlag.Snowpeak_Ruins,
+    "Temple of Time": TPFlag.Temple_of_Time,
+    "Dungeons": TPFlag.Dungeon,
+    "Cave of Ordeals": TPFlag.Cave_of_Ordeals,
+    "Agitha Rewards": TPFlag.Bug_Reward,
+    "Golden Bugs": TPFlag.Bug_Reward,
+    "Poes": TPFlag.Poe,
+    "Freestanding Rupees": TPFlag.Rupee_Freestanding,
+    "Hidden Rupees": TPFlag.Rupee_Hidden,
+}
+location_name_groups: dict[str, set[str]] = {group_name: set() for group_name in flags_to_groups}
+for loc_name, loc_data in LOCATION_TABLE.items():
+    if getattr(loc_data, "code", None) is None:
+        continue
+    if hasattr(loc_data, "flags") and loc_data.flags:
+        for group_name, target_flag in flags_to_groups.items():
+            if loc_data.flags & target_flag:
+                location_name_groups[group_name].add(loc_name)
+location_name_groups["Rupees"] = location_name_groups["Freestanding Rupees"] | location_name_groups["Hidden Rupees"]
+location_name_groups["Minigames"] = {
+    "Cats Hide and Seek Minigame",
+    "Talo Sharpshooting",
+    "Iza Raging Rapids Minigame",
+    "Plumm Fruit Balloon Minigame",
+    "STAR Prize 1",
+    "STAR Prize 2",
+    "Herding Goats Reward",
+    "Wrestling With Bo",
+    "Snowboard Racing Prize",
+    "Goron Springwater Rush",
+    "Flight By Fowl Top Platform Reward",
+    "Flight By Fowl Second Platform Chest",
+    "Flight By Fowl Third Platform Chest",
+    "Flight By Fowl Fourth Platform Chest",
+    "Flight By Fowl Fifth Platform Chest",
+    "Isle of Riches Poe",
+    "Outside Lanayru Spring Left Statue Chest",
+    "Outside Lanayru Spring Right Statue Chest",
+    "Lanayru Ice Block Puzzle Cave Chest",
+}
+location_name_groups = {k: v for k, v in location_name_groups.items() if v}
