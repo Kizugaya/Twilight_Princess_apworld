@@ -28,6 +28,7 @@ from .Locations import (
     LOCATION_TO_REGION,
     TPFlag,
     TPLocation,
+    location_name_groups,
 )
 from .options import *
 from worlds.AutoWorld import WebWorld, World
@@ -156,6 +157,7 @@ class TPWorld(World):
     }
 
     item_name_groups: ClassVar[dict[str, set[str]]] = item_name_groups
+    location_name_groups: ClassVar[dict[str, set[str]]] = location_name_groups
 
     web: ClassVar[TPWeb] = TPWeb()
 
